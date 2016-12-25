@@ -10,9 +10,6 @@ const std::string OPEN_BRACKET = "(";
 const std::string CLOSE_BRACKET = ")";
 const std::string IF_STATEMENT = "if";
 const std::string WHILE_STATEMENT = "while";
-//const std::string WHILE = "{";
-//const std::string START_BLOCK = "{";
-//const std::string START_BLOCK = "{";
 }
 
 bool CSyntaxAnalyzer::CheckInputSequence(const std::vector<std::string>& inputSeq)
@@ -65,9 +62,11 @@ bool CSyntaxAnalyzer::CheckAssignment()
 	return false;
 }
 
-bool CSyntaxAnalyzer::BoolExpression(size_t endOfExpression)
+bool CSyntaxAnalyzer::BoolExpression(size_t exprLen)
 {
-	return true;
+	std::vector<std::string> tableTokens;
+	std::copy(m_inputSeq.begin() + m_currentPos, m_inputSeq.begin() + m_currentPos + exprLen, tableTokens);
+	return llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
 }
 
 bool CSyntaxAnalyzer::CheckBracketsCondition()
@@ -92,6 +91,7 @@ bool CSyntaxAnalyzer::CheckBracketsCondition()
 			}
 		}
 	}
+
 	m_state = State::Error;
 	return false;
 }
