@@ -18,14 +18,14 @@ const std::string WHILE_STATEMENT = "while";
 bool CSyntaxAnalyzer::CheckInputSequence(const std::vector<std::string>& inputSeq)
 {
 	m_inputSeq = inputSeq;
-	return CheckProgramStruct();
+	return CheckProgramStruct() && m_currentPos == m_inputSeq.size();
 }
 
 bool CSyntaxAnalyzer::CheckProgramStruct()
 {
 	if (MakeShiftIfNeeded(START_BLOCK))
 	{
-		return CheckMainStruct() || MakeShiftIfNeeded(END_BLOCK); //TODO или допускает неккоректный if или нельзя впилить пустой
+		return CheckMainStruct() && MakeShiftIfNeeded(END_BLOCK); //TODO или допускает неккоректный if или нельзя впилить пустой
 	}
 	return false;
 }
@@ -34,10 +34,12 @@ bool CSyntaxAnalyzer::CheckMainStruct()
 {
 	if (CheckWhileConstruction() || CheckAssignment() || CheckIfConstruction())
 	{
-		return CheckProgramStruct();
+		return CheckMainStruct();
 	}
-	return false;
+
+	return m_state == State::None;
 }
+
 bool CSyntaxAnalyzer::CheckWhileConstruction()
 {
 	if (MakeShiftIfNeeded(WHILE_STATEMENT))
@@ -54,7 +56,7 @@ bool CSyntaxAnalyzer::CheckIfConstruction()
 	{
 		return CheckBracketsCondition();
 	}
-	 
+
 	return false;
 }
 
@@ -78,9 +80,10 @@ bool CSyntaxAnalyzer::CheckBracketsCondition()
 			auto nexSymItr = foundBracketItr + 1;
 			if (nexSymItr != m_inputSeq.end() && *nexSymItr == START_BLOCK)
 			{
-				if (BoolExpression(m_inputSeq.end() - foundBracketItr))
+				size_t exprLen = foundBracketItr - (m_inputSeq.begin() + m_currentPos);
+				if (BoolExpression(exprLen))
 				{
-					m_currentPos += foundBracketItr - m_inputSeq.begin() + m_currentPos;
+					m_currentPos += exprLen;
 					if (MakeShiftIfNeeded(CLOSE_BRACKET))
 					{
 						return CheckProgramStruct();
@@ -89,7 +92,7 @@ bool CSyntaxAnalyzer::CheckBracketsCondition()
 			}
 		}
 	}
-
+	m_state = State::Error;
 	return false;
 }
 

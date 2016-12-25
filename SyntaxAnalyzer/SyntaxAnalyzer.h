@@ -2,6 +2,13 @@
 #include <string>
 #include <vector>
 typedef std::vector<std::string> inputSeq;
+
+enum State
+{
+	Error,
+	None
+};
+
 class CSyntaxAnalyzer
 {
 public:
@@ -21,5 +28,6 @@ private:
 	bool MakeShiftIfNeeded(const std::string & checkStr);
 	inputSeq m_inputSeq;
 	size_t m_currentPos = 0;
+	State m_state = None;
 };
 

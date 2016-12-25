@@ -8,7 +8,7 @@ int main()
 {
 	CSyntaxAnalyzer synAnalyzer;
 	inputSeq inputseq = {
-		"{", "if", "}"
+		"{", "}"
 	};
 	if (synAnalyzer.CheckInputSequence(inputseq))
 	{

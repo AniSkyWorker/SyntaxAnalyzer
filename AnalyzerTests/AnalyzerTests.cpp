@@ -38,9 +38,57 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_if_statement2)
 	{
 		inputSeq inputseq = {
-			"{", "if", "(", ")", "}"
+			"{", "if", "(", ")", "}"//test to delete because empty bracket
 		};
 		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_if_statement3)
+	{
+		inputSeq inputseq = {
+			"{", "}", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(correct_primitive_bool_in_if)
+	{
+		inputSeq inputseq = {
+			"{", "if", "(", ")", "{", "}", "}"
+		};
+		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
+	}
+
+	//BOOST_AUTO_TEST_CASE(incorrect_brackets_bool_in_if)
+	//{
+	//	inputSeq inputseq = {
+	//		"{", "if", "(", ")", ")", "{", "}", "}"
+	//	};
+	//	BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	//}
+
+	//BOOST_AUTO_TEST_CASE(incorrect_brackets_bool_in_if2)
+	//{
+	//	inputSeq inputseq = {
+	//		"{", "if", "(", "(", ")", "{", "}", "}"
+	//	};
+	//	BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	//}
+
+	BOOST_AUTO_TEST_CASE(correct_sequence_inside_if_state)
+	{
+		inputSeq inputseq = {
+			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}","}", "}"
+		};
+		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state)
+	{
+		inputSeq inputseq = {
+			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "}", "}"
+		};
+		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
