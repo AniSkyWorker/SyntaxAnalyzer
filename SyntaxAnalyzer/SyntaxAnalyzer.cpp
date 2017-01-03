@@ -22,7 +22,7 @@ bool CSyntaxAnalyzer::CheckProgramStruct()
 {
 	if (MakeShiftIfNeeded(START_BLOCK))
 	{
-		return CheckMainStruct() && MakeShiftIfNeeded(END_BLOCK); //TODO или допускает неккоректный if или нельзя впилить пустой
+		return CheckMainStruct() && MakeShiftIfNeeded(END_BLOCK);
 	}
 	return false;
 }
@@ -64,9 +64,8 @@ bool CSyntaxAnalyzer::CheckAssignment()
 
 bool CSyntaxAnalyzer::BoolExpression(size_t exprLen)
 {
-	std::vector<std::string> tableTokens;
-	std::copy(m_inputSeq.begin() + m_currentPos, m_inputSeq.begin() + m_currentPos + exprLen, tableTokens);
-	return llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
+	inputSeq tableTokens(m_inputSeq.begin() + m_currentPos, m_inputSeq.begin() + m_currentPos + exprLen);
+	return true;//llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
 }
 
 bool CSyntaxAnalyzer::CheckBracketsCondition()

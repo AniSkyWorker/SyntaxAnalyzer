@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4951F051-AA92-4971-BE42-9679126A3F2D}</ProjectGuid>
+    <ProjectGuid>{0E14C64A-AF3B-4F4F-ACE2-51D1CFE9C322}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SyntaxAnalyzer</RootNamespace>
+    <RootNamespace>LexerTests</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -141,23 +141,23 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lexer\FlexLexer.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SyntaxAnalyzer.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lexer\FlexLexer.cpp" />
+    <ClCompile Include="LexerTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SyntaxAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LL1Table\LL1Table.vcxproj">
-      <Project>{89f327ab-8f2e-4184-a414-c599b4246684}</Project>
+    <ProjectReference Include="..\lexer\lexer.vcxproj">
+      <Project>{04df690f-f80d-408a-bd42-09e861765d58}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
