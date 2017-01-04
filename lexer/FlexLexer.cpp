@@ -1560,17 +1560,17 @@ void *ptr;
 }
 #include <fstream>
 #if YY_MAIN
-int main()
-{
-	std::filebuf file;
-	file.open("example.txt", std::ios_base::in);
-	std::istream stream(&file);
-	yyFlexLexer analyz(&stream, &std::cout);
-	analyz.yylex();
-	for (auto & sym : analyz.GetTokens())
-	{
-		std::cout << sym <<"\n";
-	}
-	return 0;
-}
+//int main()
+//{
+//	std::filebuf file;
+//	file.open("example.txt", std::ios_base::in);
+//	std::istream stream(&file);
+//	yyFlexLexer analyz(&stream, &std::cout);
+//	analyz.yylex();
+//	for (auto & sym : analyz.GetTokens())
+//	{
+//		std::cout << sym <<"\n";
+//	}
+//	return 0;
+//}
 #endif

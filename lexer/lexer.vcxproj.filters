@@ -4,9 +4,6 @@
     <Filter Include="Flex">
       <UniqueIdentifier>{8c5df5cc-9654-435f-b90d-f3c05ef917fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lexer">
-      <UniqueIdentifier>{813e13df-210b-4a62-a47f-e2d9d9a73ef3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{1fe78714-710d-4caf-97ae-86746f545ab2}</UniqueIdentifier>
     </Filter>

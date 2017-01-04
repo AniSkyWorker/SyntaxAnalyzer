@@ -71,6 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(sdk)\SDL2-2.0.4\include;$(sdk)\glm;$(sdk)\glew-2.0.0\include;$(sdk)\boost_1_60_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -87,6 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(compiler)\lexer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +158,9 @@
     <ClCompile Include="SyntaxAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\lexer\lexer.vcxproj">
+      <Project>{04df690f-f80d-408a-bd42-09e861765d58}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\LL1Table\LL1Table.vcxproj">
       <Project>{89f327ab-8f2e-4184-a414-c599b4246684}</Project>
     </ProjectReference>

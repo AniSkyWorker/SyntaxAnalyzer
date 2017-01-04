@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(start_end)
 	{
-	inputSeq inputseq = {
+	InputSequence inputseq = {
 		"{", "}"
 	};
 		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(incorrect_start_end)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{"
 		};
 		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(incorrect_if_statement)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{", "if", "}"
 		};
 		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(incorrect_if_statement2)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{", "if", "(", ")", "}"//test to delete because empty bracket
 		};
 		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(incorrect_if_statement3)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{", "}", "}"
 		};
 		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(correct_primitive_bool_in_if)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{", "if", "(", ")", "{", "}", "}"
 		};
 		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(correct_sequence_inside_if_state)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}","}", "}"
 		};
 		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
@@ -85,10 +85,75 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state)
 	{
-		inputSeq inputseq = {
+		InputSequence inputseq = {
 			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "}", "}"
 		};
 		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state_and_line_ends)
+	{
+	InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "}"
+	};
+		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state_and_some_line_ends)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+		};
+		BOOST_CHECK(analyzer.CheckInputSequence(inputseq));
+
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_some_line_ends)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "print", "(", "strin", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_line_ends)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", ";", "}", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_line_ends2)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", "}", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_line_ends3)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "print", "(", "string", "print", "(", "string", ")", ";", "}", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_end_lines)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "print", ")", ";", ";", "}", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_closing_brackets_end_lines)
+	{
+		InputSequence inputseq = {
+			"{", "if", "(", ")", "{", "print", ")", ")", ";", "}", "}"
+		};
+		BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

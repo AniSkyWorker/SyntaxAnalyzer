@@ -3,16 +3,37 @@
 
 #include "stdafx.h"
 #include "SyntaxAnalyzer.h"
+#include "FlexLexer.h"
+#include <fstream>
+
+std::vector<std::string> GetLexerTokens(const std::string & filename)
+{
+	std::filebuf file;
+	file.open(filename, std::ios_base::in);
+	std::istream stream(&file);
+
+	yyFlexLexer analyz(&stream, &std::cout);
+	analyz.yylex();
+
+	return analyz.GetTokens();
+}
 
 int main()
 {
 	CSyntaxAnalyzer synAnalyzer;
-	inputSeq inputseq = {
-		"{", "}"
+	InputSequence inputseq = {
+		"{", "if", "(", ")", "{", "print", "(", "string", "print", "(", "string", ")", ";", "}", "}"
 	};
+	//InputSequence inputseq = {
+	//	"{", "if", "(", ")", "}"//test to delete because empty bracket
+	//};
 	if (synAnalyzer.CheckInputSequence(inputseq))
 	{
-
+		std::cout << "Run sucessful!";
+	}
+	else
+	{
+		std::cerr << "Error while parsing!";
 	}
     return 0;
 }
