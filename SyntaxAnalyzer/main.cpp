@@ -22,11 +22,9 @@ int main()
 {
 	CSyntaxAnalyzer synAnalyzer;
 	InputSequence inputseq = {
-		"{", "if", "(", ")", "{", "print", "(", "string", "print", "(", "string", ")", ";", "}", "}"
+		"{", "int", "id", "=", ";", "bool", "id", ";", "}"
 	};
-	//InputSequence inputseq = {
-	//	"{", "if", "(", ")", "}"//test to delete because empty bracket
-	//};
+	
 	if (synAnalyzer.CheckInputSequence(inputseq))
 	{
 		std::cout << "Run sucessful!";

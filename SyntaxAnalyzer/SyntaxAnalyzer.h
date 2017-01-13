@@ -3,8 +3,10 @@
 #include <vector>
 #include <functional>
 #include "../LL1Table/LL1Walker.h"
+#include "Types.h"
 
 typedef std::vector<std::string> InputSequence;
+typedef std::function<bool(const InputSequence &)> CheckSequenceFunc;
 
 enum State
 {
@@ -15,7 +17,8 @@ enum State
 class CSyntaxAnalyzer
 {
 public:
-	bool CheckInputSequence(const std::vector<std::string> & inputSeq);
+	CSyntaxAnalyzer();
+	bool CheckInputSequence(const InputSequence & inputSeq);
 
 private:
 	bool CheckProgramStruct();
@@ -24,26 +27,32 @@ private:
 	bool CheckWhileConstruction();
 	bool CheckIfConstruction();
 
-	bool CheckAssignment(const InputSequence &);
-	bool BoolExpression(const InputSequence &);
-	bool CheckArithmeticExpression(const InputSequence &);
+	bool CheckAssignment();
+	bool CheckBoolExpression(const InputSequence & seq);
+	bool CheckArithmeticExpression(const InputSequence & seq);
 
 	bool CheckPrint();
 	bool CheckRead();
 	bool CheckData(const InputSequence &);
 
-	bool CheckBracketsExpr(const std::function<bool(const InputSequence &)> & insideBracketsExpr);
+	bool CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr);
 
-	bool ChekDeclare(const InputSequence &);
+	bool CheckDeclare();
 
 	bool MakeShiftIfNeeded(const std::string & checkStr);
 	bool CheckOneTokenExpr(const std::string & token, const InputSequence & seq);
 	
+	bool CheckTypeAssigmentCorrectness(Types type);
+
+	bool CheckString(const InputSequence & seq);
+	bool CheckChar(const InputSequence & seq);
+
 	size_t GetNextExpressionLength();
 
 	LL1Walker llWalker;
 	InputSequence m_inputSeq;
 	size_t m_currentPos = 0;
 	State m_state = None;
+	const std::map<Types, CheckSequenceFunc> m_checkTypesMap;
 };
 

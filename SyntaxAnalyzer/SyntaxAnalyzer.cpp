@@ -4,6 +4,7 @@
 
 namespace
 {
+
 const std::string START_BLOCK = "{";
 const std::string END_BLOCK = "}";
 const std::string OPEN_BRACKET = "(";
@@ -13,8 +14,17 @@ const std::string WHILE_STATEMENT = "while";
 const std::string LINE_END = ";";
 const std::string PRINT = "print";
 const std::string READ = "read";
-const std::string STRING = "string";
-const std::string CHAR = "char";
+const std::string ID = "id";
+const std::string ASSIGMENT = "=";
+
+const std::map<Types, std::string> TYPES_MAP =
+{
+	{ Types::BOOL, "bool" },
+	{ Types::INT, "int" },
+	{ Types::CHAR, "char" },
+	{ Types::STRING, "string" },
+	{ Types::FLOAT, "float"}
+};
 
 InputSequence GetSequenceFromSequence(size_t currentPos, size_t length, const InputSequence & inputSeq)
 {
@@ -23,8 +33,21 @@ InputSequence GetSequenceFromSequence(size_t currentPos, size_t length, const In
 
 }
 
-bool CSyntaxAnalyzer::CheckInputSequence(const std::vector<std::string>& inputSeq)
+CSyntaxAnalyzer::CSyntaxAnalyzer()
+	: m_checkTypesMap({
+		{ Types::BOOL, std::bind(&CSyntaxAnalyzer::CheckBoolExpression, this, std::placeholders::_1) },
+		{ Types::INT, std::bind(&CSyntaxAnalyzer::CheckArithmeticExpression, this, std::placeholders::_1) },
+		{ Types::FLOAT, std::bind(&CSyntaxAnalyzer::CheckArithmeticExpression, this, std::placeholders::_1) },
+		{ Types::STRING, std::bind(&CSyntaxAnalyzer::CheckString, this, std::placeholders::_1) },
+		{ Types::CHAR, std::bind(&CSyntaxAnalyzer::CheckChar, this, std::placeholders::_1) }
+	})
 {
+}
+
+bool CSyntaxAnalyzer::CheckInputSequence(const InputSequence & inputSeq)
+{
+	m_state = None;
+	m_currentPos = 0;
 	m_inputSeq = inputSeq;
 	return CheckProgramStruct() && m_currentPos == m_inputSeq.size();
 }
@@ -42,14 +65,14 @@ bool CSyntaxAnalyzer::CheckProgramStruct()
 
 bool CSyntaxAnalyzer::CheckMainStruct()
 {
-	if (CheckWhileConstruction() || CheckIfConstruction() || CheckRead() || CheckPrint())
+	if (CheckWhileConstruction() || CheckIfConstruction() || CheckRead() || CheckPrint() || CheckAssignment() || CheckDeclare())
 	{
 		return CheckMainStruct();
 	}
 	else if (size_t nextExprLen = GetNextExpressionLength() != 0)
 	{
 		InputSequence seq = GetSequenceFromSequence(m_currentPos, nextExprLen, m_inputSeq);
-		if (CheckAssignment(seq) || CheckArithmeticExpression(seq) /*BoolExpression(seq)*/)
+		if (CheckArithmeticExpression(seq) /*BoolExpression(seq)*/)
 		{
 			m_currentPos += nextExprLen;
 			return CheckMainStruct();
@@ -63,7 +86,7 @@ bool CSyntaxAnalyzer::CheckWhileConstruction()
 {
 	if (MakeShiftIfNeeded(WHILE_STATEMENT))
 	{
-		if (CheckBracketsExpr(std::bind(&CSyntaxAnalyzer::BoolExpression, this, std::placeholders::_1)))
+		if (CheckBracketsExpr(std::bind(&CSyntaxAnalyzer::CheckBoolExpression, this, std::placeholders::_1)))
 		{
 			return CheckProgramStruct();
 		}
@@ -76,7 +99,7 @@ bool CSyntaxAnalyzer::CheckIfConstruction()
 {	
 	if (MakeShiftIfNeeded(IF_STATEMENT))
 	{
-		if (CheckBracketsExpr(std::bind(&CSyntaxAnalyzer::BoolExpression, this, std::placeholders::_1)))
+		if (CheckBracketsExpr(std::bind(&CSyntaxAnalyzer::CheckBoolExpression, this, std::placeholders::_1)))
 		{
 			return CheckProgramStruct();
 		}
@@ -85,12 +108,26 @@ bool CSyntaxAnalyzer::CheckIfConstruction()
 	return false;
 }
 
-bool CSyntaxAnalyzer::CheckAssignment(const InputSequence &)
+bool CSyntaxAnalyzer::CheckAssignment()
 {
-	return false;//llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
+	if (MakeShiftIfNeeded(ID))
+	{
+		if (MakeShiftIfNeeded(ASSIGMENT))
+		{
+			auto assigmentSeq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
+			if (CheckData(assigmentSeq))
+			{
+				m_currentPos += assigmentSeq.size();
+				return MakeShiftIfNeeded(LINE_END);
+			}
+		}
+		m_state = Error;
+	}
+
+	return false;
 }
 
-bool CSyntaxAnalyzer::BoolExpression(const InputSequence &n)
+bool CSyntaxAnalyzer::CheckBoolExpression(const InputSequence &n)
 {
 	return true;//llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
 }
@@ -124,12 +161,13 @@ bool CSyntaxAnalyzer::CheckPrint()
 	return false;
 }
 
+//TODO выпилить бул и int они будут в таблице
 bool CSyntaxAnalyzer::CheckData(const InputSequence & seq)
 {
-	return /*BoolExpression(seq) ||*/ CheckArithmeticExpression(seq) || CheckOneTokenExpr(STRING, seq) || CheckOneTokenExpr(CHAR, seq);
+	return /*BoolExpression(seq) ||*/ CheckArithmeticExpression(seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::STRING), seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::CHAR), seq) || CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::INT), seq);
 }
 
-bool CSyntaxAnalyzer::CheckBracketsExpr(const std::function<bool(const InputSequence &)>& insideBracketsExpr)
+bool CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr)
 {
 	if (MakeShiftIfNeeded(OPEN_BRACKET))
 	{
@@ -148,9 +186,36 @@ bool CSyntaxAnalyzer::CheckBracketsExpr(const std::function<bool(const InputSequ
 	return false;
 }
 
-bool CSyntaxAnalyzer::ChekDeclare(const InputSequence &)
+bool CSyntaxAnalyzer::CheckDeclare()
 {
-	return false;//llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
+	auto found = TYPES_MAP.end();
+
+	if (m_currentPos < m_inputSeq.size())
+	{
+		found = std::find_if(TYPES_MAP.begin(), TYPES_MAP.end(), [=](const auto &typePair) { return typePair.second == m_inputSeq[m_currentPos]; });
+	}
+
+	if(found != TYPES_MAP.end() && MakeShiftIfNeeded(found->second))
+	{
+		if (MakeShiftIfNeeded(ID))
+		{
+			if (MakeShiftIfNeeded(ASSIGMENT))
+			{
+				auto seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
+				if (CheckOneTokenExpr(ID, seq) || (m_checkTypesMap.at(found->first))(seq))
+				{
+					m_currentPos += seq.size();
+				}
+				else
+				{
+					m_state = Error;
+				}
+			}
+			return MakeShiftIfNeeded(LINE_END);
+		}
+		m_state = Error;
+	}
+	return false;
 }
 
 bool CSyntaxAnalyzer::MakeShiftIfNeeded(const std::string & checkStr)
@@ -163,7 +228,6 @@ bool CSyntaxAnalyzer::MakeShiftIfNeeded(const std::string & checkStr)
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -174,6 +238,21 @@ bool CSyntaxAnalyzer::CheckOneTokenExpr(const std::string & token, const InputSe
 		return token == seq.front();
 	}
 	return false;
+}
+
+bool CSyntaxAnalyzer::CheckTypeAssigmentCorrectness(Types type)
+{
+	return false;
+}
+
+bool CSyntaxAnalyzer::CheckString(const InputSequence & seq)
+{
+	return CheckOneTokenExpr(TYPES_MAP.at(STRING), seq);
+}
+
+bool CSyntaxAnalyzer::CheckChar(const InputSequence & seq)
+{
+	return CheckOneTokenExpr(TYPES_MAP.at(CHAR), seq);
 }
 
 size_t CSyntaxAnalyzer::GetNextExpressionLength()
