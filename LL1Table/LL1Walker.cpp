@@ -45,6 +45,11 @@ public:
 
 bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, const LL1Table & table)
 {
+	while (!m_stack.empty())
+	{
+		m_stack.pop();
+	}
+
 	size_t currentSymbolIndex = 0;
 	size_t tableRowIndex = 0;
 	LL1TableString currentTableRow = table[tableRowIndex];

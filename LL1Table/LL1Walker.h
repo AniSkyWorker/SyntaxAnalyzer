@@ -2,8 +2,6 @@
 #include "LL1TableString.h"
 #include <stack>
 
-typedef std::vector<LL1TableString> LL1Table;
-
 class LL1Walker
 {
 public:

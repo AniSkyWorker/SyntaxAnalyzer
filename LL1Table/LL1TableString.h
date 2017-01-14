@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include <vector>
 
 struct LL1TableString
 {
@@ -12,3 +12,5 @@ struct LL1TableString
 	bool stack;
 	std::vector<std::string> input;
 };
+
+typedef std::vector<LL1TableString> LL1Table;
