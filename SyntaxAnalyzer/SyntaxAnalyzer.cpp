@@ -1,21 +1,10 @@
 #include "stdafx.h"
 #include "SyntaxAnalyzer.h"
+#include "LRWalker.h"
 #include <algorithm>
 
 namespace
 {
-
-const std::string START_BLOCK = "{";
-const std::string END_BLOCK = "}";
-const std::string OPEN_BRACKET = "(";
-const std::string CLOSE_BRACKET = ")";
-const std::string IF_STATEMENT = "if";
-const std::string WHILE_STATEMENT = "while";
-const std::string LINE_END = ";";
-const std::string PRINT = "print";
-const std::string READ = "read";
-const std::string ID = "id";
-const std::string ASSIGMENT = "=";
 
 const std::map<Types, std::string> TYPES_MAP =
 {
@@ -26,9 +15,32 @@ const std::map<Types, std::string> TYPES_MAP =
 	{ Types::FLOAT, "float"}
 };
 
+const std::string START_BLOCK = "{";
+const std::string END_BLOCK = "}";
+const std::string OPEN_BRACKET = "(";
+const std::string CLOSE_BRACKET = ")";
+const std::string INDEX_OPEN = "[";
+const std::string INDEX_CLOSE = "]";
+const std::string IF_STATEMENT = "if";
+const std::string WHILE_STATEMENT = "while";
+const std::string LINE_END = ";";
+const std::string PRINT = "print";
+const std::string READ = "read";
+const std::string ID = "id";
+const std::string ASSIGMENT = "=";
+
 InputSequence GetSequenceFromSequence(size_t currentPos, size_t length, const InputSequence & inputSeq)
 {
 	return InputSequence(inputSeq.begin() + currentPos, inputSeq.begin() + currentPos + length);
+}
+
+bool CheckOneTokenExpr(const std::string & token, const InputSequence & seq)
+{
+	if (seq.size() == 1)
+	{
+		return token == seq.front();
+	}
+	return false;
 }
 
 }
@@ -127,14 +139,14 @@ bool CSyntaxAnalyzer::CheckAssignment()
 	return false;
 }
 
-bool CSyntaxAnalyzer::CheckBoolExpression(const InputSequence &n)
+bool CSyntaxAnalyzer::CheckBoolExpression(const InputSequence & /*seq*/)
 {
-	return true;//llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
+	return true;//m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(TableType::boolean));
 }
 
-bool CSyntaxAnalyzer::CheckArithmeticExpression(const InputSequence &)
+bool CSyntaxAnalyzer::CheckArithmeticExpression(const InputSequence & /*seq*/)
 {
-	return false;//llWalker.CheckInputSequence(tableTokens, LL1Table()); // TODO хранилище
+	return false;//LRWalker::CheckInputSequence(seq, m_tableStorage.GetLRTable(TableType::arithmetic));
 }
 
 bool CSyntaxAnalyzer::CheckRead()
@@ -164,14 +176,14 @@ bool CSyntaxAnalyzer::CheckPrint()
 //TODO выпилить бул и int они будут в таблице
 bool CSyntaxAnalyzer::CheckData(const InputSequence & seq)
 {
-	return /*BoolExpression(seq) ||*/ CheckArithmeticExpression(seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::STRING), seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::CHAR), seq) || CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::INT), seq);
+	return /*BoolExpression(seq) ||*/ CheckArithmeticExpression(seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::STRING), seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::CHAR), seq) || CheckTypeWithIndecies(ID, seq) || CheckOneTokenExpr(TYPES_MAP.at(Types::INT), seq);
 }
 
 bool CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr)
 {
 	if (MakeShiftIfNeeded(OPEN_BRACKET))
 	{
-		auto foundBracketItr = std::find(m_inputSeq.begin() + m_currentPos, m_inputSeq.end(), CLOSE_BRACKET);
+		auto foundBracketItr = std::find(m_inputSeq.begin() + m_currentPos, m_inputSeq.end(),CLOSE_BRACKET);
 		if (foundBracketItr != m_inputSeq.end())
 		{
 			size_t exprLen = foundBracketItr - (m_inputSeq.begin() + m_currentPos);
@@ -186,6 +198,7 @@ bool CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBrackets
 	return false;
 }
 
+//todo рефакторить
 bool CSyntaxAnalyzer::CheckDeclare()
 {
 	auto found = TYPES_MAP.end();
@@ -199,10 +212,11 @@ bool CSyntaxAnalyzer::CheckDeclare()
 	{
 		if (MakeShiftIfNeeded(ID))
 		{
+			auto seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
 			if (MakeShiftIfNeeded(ASSIGMENT))
 			{
-				auto seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
-				if (CheckOneTokenExpr(ID, seq) || (m_checkTypesMap.at(found->first))(seq))
+				seq.erase(seq.begin());
+				if (CheckTypeWithIndecies(ID, seq) || (m_checkTypesMap.at(found->first))(seq))
 				{
 					m_currentPos += seq.size();
 				}
@@ -211,6 +225,15 @@ bool CSyntaxAnalyzer::CheckDeclare()
 					m_state = Error;
 				}
 			}
+			else
+			{
+
+				if (ChecIndexStruct(seq))
+				{
+					m_currentPos += seq.size();
+				}
+			}
+
 			return MakeShiftIfNeeded(LINE_END);
 		}
 		m_state = Error;
@@ -218,31 +241,25 @@ bool CSyntaxAnalyzer::CheckDeclare()
 	return false;
 }
 
-bool CSyntaxAnalyzer::MakeShiftIfNeeded(const std::string & checkStr)
+bool CSyntaxAnalyzer::MakeShiftIfNeeded(const std::string & checkStr, bool shift)
 {
 	if (m_currentPos < m_inputSeq.size())
 	{
 		if (m_inputSeq[m_currentPos] == checkStr)
 		{
-			m_currentPos++;
+			if (shift)
+			{
+				m_currentPos++;
+			}
 			return true;
 		}
 	}
 	return false;
 }
 
-bool CSyntaxAnalyzer::CheckOneTokenExpr(const std::string & token, const InputSequence & seq)
+bool CSyntaxAnalyzer::CheckTypeWithIndecies(const std::string & type, const InputSequence & seq)
 {
-	if (seq.size() == 1)
-	{
-		return token == seq.front();
-	}
-	return false;
-}
-
-bool CSyntaxAnalyzer::CheckTypeAssigmentCorrectness(Types type)
-{
-	return false;
+	return CheckOneTokenExpr(type, seq) || (MakeShiftIfNeeded(type, false) && ChecIndexStruct(seq, 1));
 }
 
 bool CSyntaxAnalyzer::CheckString(const InputSequence & seq)
@@ -253,6 +270,44 @@ bool CSyntaxAnalyzer::CheckString(const InputSequence & seq)
 bool CSyntaxAnalyzer::CheckChar(const InputSequence & seq)
 {
 	return CheckOneTokenExpr(TYPES_MAP.at(CHAR), seq);
+}
+
+bool CSyntaxAnalyzer::ChecIndexStruct(const InputSequence & seq, size_t start)
+{
+	if (CheckIndex(seq, start))
+	{
+		size_t currentPos = m_currentPos + start;
+		if (currentPos < m_inputSeq.size())
+		{
+			return m_inputSeq[currentPos] == LINE_END || ChecIndexStruct(seq, start);
+		}
+	}
+	return  false;
+}
+
+bool CSyntaxAnalyzer::CheckIndex(const InputSequence & sequence, size_t & start)
+{
+	if (start < sequence.size())
+	{
+		if (sequence[start] == INDEX_OPEN)
+		{
+			start++;
+			auto foundBracketItr = std::find(sequence.begin() + start, sequence.end(), INDEX_CLOSE);
+			if (foundBracketItr != sequence.end())
+			{
+				size_t exprLen = foundBracketItr - (sequence.begin() + start);
+				auto seq = GetSequenceFromSequence(start, exprLen, sequence);
+				if (CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(TYPES_MAP.at(INT), seq))
+				{
+					start += 2;
+					return true;
+				}
+			}
+		}
+
+		m_state = State::Error;
+	}
+	return false;
 }
 
 size_t CSyntaxAnalyzer::GetNextExpressionLength()

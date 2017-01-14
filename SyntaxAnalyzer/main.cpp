@@ -22,9 +22,8 @@ int main()
 {
 	CSyntaxAnalyzer synAnalyzer;
 	InputSequence inputseq = {
-		"{", "int", "id", "=", ";", "bool", "id", ";", "}"
+		"{", "int", "id","[", "int", "]", ";", "}"
 	};
-	
 	if (synAnalyzer.CheckInputSequence(inputseq))
 	{
 		std::cout << "Run sucessful!";
