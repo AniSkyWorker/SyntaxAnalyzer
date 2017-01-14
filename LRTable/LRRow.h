@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 struct RowElement
 {
@@ -14,3 +15,5 @@ struct RowElement
 	boost::optional<Rule> rollup;
 	bool shift;
 };
+
+typedef std::vector<std::vector<RowElement>> LRTable;

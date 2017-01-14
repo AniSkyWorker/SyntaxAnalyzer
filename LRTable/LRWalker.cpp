@@ -42,50 +42,48 @@ public:
 	{}
 };
 
-LRWalker::LRWalker(const std::vector<std::string>& seq, const LRTable & table)
-	: m_table(table), m_inputSeq(seq)
-{}
-
-bool LRWalker::CheckInputSequence()
+bool LRWalker::CheckInputSequence(std::vector<std::string> seq, const LRTable & table)
 {
-	m_transitions.push(0);
-	size_t startSize = m_inputSeq.size();
-	while (!m_transitions.empty())
+	std::stack<std::string> elements;
+	std::stack<unsigned> transitions;
+	transitions.push(0);
+	size_t startSize = seq.size();
+	while (!transitions.empty())
 	{
-		for (size_t i = 0; i < m_table[m_transitions.top()].size(); i++)
+		for (size_t i = 0; i < table[transitions.top()].size(); i++)
 		{
-			if (m_inputSeq.empty())
+			if (seq.empty())
 			{
-				if (m_table[m_transitions.top()].back().rollup)
+				if (table[transitions.top()].back().rollup)
 				{
-					auto rule = *m_table[m_transitions.top()].back().rollup;
+					auto rule = *table[transitions.top()].back().rollup;
 					for (size_t j = 0; j < rule.size; j++)
 					{
-						m_transitions.pop();
-						m_elements.pop();
+						transitions.pop();
+						elements.pop();
 					}
-					m_inputSeq.push_back(rule.outputSym);
-					m_elements.push(rule.outputSym);
+					seq.push_back(rule.outputSym);
+					elements.push(rule.outputSym);
 					break;
 				}
 				else
 				{
-					throw CUnexpectedSymbolsError(m_table[m_transitions.top()], "", startSize - m_inputSeq.size());
+					throw CUnexpectedSymbolsError(table[transitions.top()], "", startSize - seq.size());
 				}
 			}
 			else
 			{
-				auto currentTransition = m_table[m_transitions.top()][i];
-				if (currentTransition.inputSym == m_inputSeq.front())
+				auto currentTransition = table[transitions.top()][i];
+				if (currentTransition.inputSym == seq.front())
 				{
 					if (currentTransition.transition != -1)
 					{
-						m_transitions.push(currentTransition.transition);
+						transitions.push(currentTransition.transition);
 						if (currentTransition.shift)
 						{
-							m_elements.push(m_inputSeq.front());
+							elements.push(seq.front());
 						}
-						m_inputSeq.erase(m_inputSeq.begin());
+						seq.erase(seq.begin());
 					}
 					else if (currentTransition.shift && currentTransition.inputSym == "S")
 					{
@@ -96,21 +94,21 @@ bool LRWalker::CheckInputSequence()
 						auto rule = *currentTransition.rollup;
 						for (size_t j = 0; j < rule.size; j++)
 						{
-							m_transitions.pop();
-							m_elements.pop();
+							transitions.pop();
+							elements.pop();
 						}
-						m_inputSeq.insert(m_inputSeq.begin(), rule.outputSym);
-						m_elements.push(rule.outputSym);
+						seq.insert(seq.begin(), rule.outputSym);
+						elements.push(rule.outputSym);
 					}
 					else
 					{
-						throw CUnexpectedSymbolsError(m_table[m_transitions.top()], m_inputSeq.front(), startSize - m_inputSeq.size());
+						throw CUnexpectedSymbolsError(table[transitions.top()], seq.front(), startSize - seq.size());
 					}
 					break;
 				}
-				if (i >= m_table[m_transitions.top()].size() - 1)
+				if (i >= table[transitions.top()].size() - 1)
 				{
-					throw CUnexpectedSymbolsError(m_table[m_transitions.top()], m_inputSeq.front(), startSize - m_inputSeq.size());
+					throw CUnexpectedSymbolsError(table[transitions.top()], seq.front(), startSize - seq.size());
 				}
 			}
 		}
