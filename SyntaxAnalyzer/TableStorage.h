@@ -7,7 +7,6 @@ class CTableStorage
 {
 public:
 	CTableStorage();
-	~CTableStorage();
 
 	const LL1Table & GetLL1Table(TableType type);
 	const LRTable & GetLRTable(TableType type);
