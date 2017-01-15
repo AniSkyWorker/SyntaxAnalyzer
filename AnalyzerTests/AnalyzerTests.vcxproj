@@ -87,6 +87,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(compiler)\LrTable;$(compiler)\LL1Table;$(sdk)\assimp-3.3.1\include;C:\projects\cg_course_examples\chapter_4\libs\anax;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,11 +143,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SyntaxAnalyzer\SyntaxAnalyzer.h" />
+    <ClInclude Include="..\SyntaxAnalyzer\SyntaxExceptions.h" />
+    <ClInclude Include="..\SyntaxAnalyzer\TableStorage.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SyntaxAnalyzer\SyntaxAnalyzer.cpp" />
+    <ClCompile Include="..\SyntaxAnalyzer\SyntaxExceptions.cpp" />
+    <ClCompile Include="..\SyntaxAnalyzer\TableStorage.cpp" />
     <ClCompile Include="AnalyzerTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -154,6 +160,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LL1Table\LL1Table.vcxproj">
+      <Project>{89f327ab-8f2e-4184-a414-c599b4246684}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\LRTable\LRTable.vcxproj">
+      <Project>{ebbdfe6d-63ef-4d4e-9bc6-5413c8d0e7e2}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

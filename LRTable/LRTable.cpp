@@ -27,10 +27,9 @@ int main()
 
 	std::vector<std::string> inputSeq = {"-", "(", "id", ")"};
 
-	auto walker = LRWalker(inputSeq, table);
 	try
 	{
-		if (walker.CheckInputSequence())
+		if (LRWalker::CheckInputSequence(inputSeq, table))
 		{
 			std::cout << "Suc!";
 		}

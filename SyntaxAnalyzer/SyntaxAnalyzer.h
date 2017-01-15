@@ -19,14 +19,15 @@ class CSyntaxAnalyzer
 {
 public:
 	CSyntaxAnalyzer();
-	bool CheckInputSequence(const InputSequence & inputSeq);
+	void CheckInputSequence(const InputSequence & inputSeq);
 
 private:
-	bool CheckProgramStruct();
-	bool CheckMainStruct();
+	void CheckProgramStruct();
+	void CheckMainStruct();
 
 	bool CheckWhileConstruction();
 	bool CheckIfConstruction();
+	void CheckElIfConstruction();
 
 	bool CheckAssignment();
 	bool CheckBoolExpression(const InputSequence & seq);
@@ -34,16 +35,16 @@ private:
 
 	bool CheckPrint();
 	bool CheckRead();
-	bool CheckData(const InputSequence &);
 
-	bool CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr);
+	bool CheckData(const InputSequence &);
+	bool CheckString(const InputSequence & seq);
+	bool CheckChar(const InputSequence & seq);
+
+	void CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr);
 
 	bool CheckDeclare();
 
-	bool MakeShiftIfNeeded(const std::string & checkStr, bool shift = true);
-
-	bool CheckString(const InputSequence & seq);
-	bool CheckChar(const InputSequence & seq);
+	bool MakeShiftIfNeeded(const std::string & checkStr, bool shift = true, bool exception = false);
 
 	bool ChecIndexStruct(const InputSequence & seq, size_t start = 0);
 	bool CheckIndex(const InputSequence & seq, size_t & start);
@@ -56,7 +57,6 @@ private:
 
 	InputSequence m_inputSeq;
 	size_t m_currentPos = 0;
-	State m_state = None;
 	const std::map<Types, CheckSequenceFunc> m_checkTypesMap;
 };
 

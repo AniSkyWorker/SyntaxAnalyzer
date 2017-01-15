@@ -24,6 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\SyntaxAnalyzer\TableStorage.h">
+      <Filter>Analyzer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SyntaxAnalyzer\SyntaxExceptions.h">
+      <Filter>Analyzer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SyntaxAnalyzer\SyntaxAnalyzer.cpp">
@@ -34,6 +41,12 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SyntaxAnalyzer\TableStorage.cpp">
+      <Filter>Analyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SyntaxAnalyzer\SyntaxExceptions.cpp">
+      <Filter>Analyzer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

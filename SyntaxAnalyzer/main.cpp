@@ -20,17 +20,16 @@ std::vector<std::string> GetLexerTokens(const std::string & filename)
 
 int main()
 {
-	CSyntaxAnalyzer synAnalyzer;
-	InputSequence inputseq = {
-		"{", "int", "id","[", "int", "]", ";", "}"
-	};
-	if (synAnalyzer.CheckInputSequence(inputseq))
-	{
-		std::cout << "Run sucessful!";
+	try {
+		CSyntaxAnalyzer synAnalyzer;
+		InputSequence inputseq  = {
+			"{", "if", "(", ")", "}"
+		};
+		synAnalyzer.CheckInputSequence(inputseq);
 	}
-	else
+	catch (const std::exception & exc)
 	{
-		std::cerr << "Error while parsing!";
+		std::cout << exc.what();
 	}
     return 0;
 }

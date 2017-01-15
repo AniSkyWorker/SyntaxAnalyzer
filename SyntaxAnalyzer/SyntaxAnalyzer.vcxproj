@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SyntaxAnalyzer.h" />
+    <ClInclude Include="SyntaxExceptions.h" />
     <ClInclude Include="TableStorage.h" />
     <ClInclude Include="TableType.h" />
     <ClInclude Include="targetver.h" />
@@ -159,6 +160,7 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SyntaxAnalyzer.cpp" />
+    <ClCompile Include="SyntaxExceptions.cpp" />
     <ClCompile Include="TableStorage.cpp" />
   </ItemGroup>
   <ItemGroup>

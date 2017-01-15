@@ -29,6 +29,9 @@
     </ClInclude>
     <ClInclude Include="TableStorage.h" />
     <ClInclude Include="TableType.h" />
+    <ClInclude Include="SyntaxExceptions.h">
+      <Filter>SyntaxAnalyzer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SyntaxAnalyzer.cpp">
@@ -41,5 +44,8 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TableStorage.cpp" />
+    <ClCompile Include="SyntaxExceptions.cpp">
+      <Filter>SyntaxAnalyzer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
