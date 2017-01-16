@@ -9,23 +9,22 @@
 std::vector<std::string> GetLexerTokens(const std::string & filename)
 {
 	std::filebuf file;
-	file.open(filename, std::ios_base::in);
+	if(!file.open(filename, std::ios_base::in))
+	{
+		throw std::runtime_error("Error when open " + filename);
+	}
 	std::istream stream(&file);
-
 	yyFlexLexer analyz(&stream, &std::cout);
 	analyz.yylex();
-
 	return analyz.GetTokens();
 }
 
-int main()
+int main(int argc, char * argv[])
 {
-	try {
+	try
+	{
 		CSyntaxAnalyzer synAnalyzer;
-		InputSequence inputseq  = {
-			"{", "if", "(", ")", "}"
-		};
-		synAnalyzer.CheckInputSequence(inputseq);
+		synAnalyzer.CheckInputSequence(GetLexerTokens(argv[1]));
 	}
 	catch (const std::exception & exc)
 	{

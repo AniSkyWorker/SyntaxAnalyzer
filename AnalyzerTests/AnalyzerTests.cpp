@@ -255,32 +255,32 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_declare_test)
 	{
 		InputSequence inputseq = {
-			"{", "int", "id", ";", "}"
+			"{", "inttype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "int", "id", ";", "bool", "id", ";", "}"
+			"{", "inttype", "id", ";", "booltype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "string", "id", "=", "string", ";", "}"
+			"{", "stringtype", "id", "=", "string", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "char", "id", "=", "char", ";", "}"
+			"{", "chartype", "id", "=", "char", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "bool", "id", "=", "id", ";", "}"
+			"{", "booltype", "id", "=", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "bool", "id", "=", "id", ";", "char", "id", ";","}"
+			"{", "booltype", "id", "=", "id", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_declare_test2)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{","string", "id", ";", "}", "char", "id", "=", "char", ";", "id", "=", "id", ";", "}"
+			"{", "if", "(", ")", "{","stringtype", "id", ";", "}", "chartype", "id", "=", "char", ";", "id", "=", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -296,37 +296,47 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_declare_test)
 	{
 		InputSequence inputseq = {
-			"{", "int", ";", "}"
+			"{", "inttype", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "int", "id", "=", ";", "bool", "id", ";", "}"
+			"{", "inttype", "id", "=", ";", "booltype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "string", "id", "=", "char", ";", "}"
+			"{", "stringtype", "id", "=", "char", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "char", "id", "=", "string", ";", "}"
+			"{", "chartype", "id", "=", "string", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "bool", "=", "id", ";", "}"
+			"{", "booltype", "=", "id", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "bool", "bool", "id", "=", "id", ";", "char", "id", ";","}"
+			"{", "booltype", "bool", "id", "=", "id", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "bool", "id", ";", "=", "id", ";", "char", "id", ";","}"
+			"{", "booltype", "id", ";", "=", "id", ";", "chartype", "id", ";","}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
+
+		inputseq = {
+			"{", "string", "id", ";", "=", "id", ";", "chartype", "id", ";","}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
+
+		inputseq = {
+			"{", "stringtype", "id", ";", "=", "stringtype", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -334,27 +344,27 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_index_test)
 	{
 		InputSequence inputseq = {
-			"{", "int", "id","[", "id", "]", ";", "}"
+			"{", "inttype", "id","[", "id", "]", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "int", "id","[","id","]","[", "int", "]","[", "int", "]", ";", "bool", "id","[", "id", "]", ";", "}"
+			"{", "inttype", "id","[","id","]","[", "int", "]","[", "int", "]", ";", "booltype", "id","[", "id", "]", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "bool", "id", "=", "id", "[", "int", "]","[", "id", "]", ";", "}"
+			"{", "booltype", "id", "=", "id", "[", "int", "]","[", "id", "]", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "bool", "id", "=", "id","[", "id", "]","[", "int", "]", ";", "char", "id", ";","}"
+			"{", "booltype", "id", "=", "id","[", "id", "]","[", "int", "]", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "id", "=", "id","[", "id", "]","[", "int", "]", ";", "char", "id", ";","}"
+			"{", "id", "=", "id","[", "id", "]","[", "int", "]", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -362,32 +372,32 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_index_test)
 	{
 		InputSequence inputseq = {
-			"{", "int", "id","[", "id", ";", "}"
+			"{", "inttype", "id","[", "id", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "int", "id","[",
+			"{", "inttype", "id","[",
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 		
 		inputseq = {
-			"{", "int", "id","[","id","[","]","[", "int", "]","[", "int", "]", ";", "bool", "id","[", "id", "]", ";", "}"
+			"{", "inttype", "id","[","id","[","]","[", "int", "]","[", "int", "]", ";", "booltype", "id","[", "id", "]", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "bool", "id", "=", "id", "[", "]", "[", "id", "]", ";", "}"
+			"{", "booltype", "id", "=", "id", "[", "]", "[", "id", "]", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "bool", "id", "=", "id","[", "id", "]","[", "6", "]", ";", "char", "id", ";","}"
+			"{", "booltype", "id", "=", "id","[", "id", "]","[", "6", "]", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "id", "=", "id","[", "]","[", "int", "]", ";", "char", "id", ";","}"
+			"{", "id", "=", "id","[", "]","[", "int", "]", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -506,27 +516,27 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_const_declare_test)
 	{
 		InputSequence inputseq = {
-			"{", "const", "int", "id", ";", "}"
+			"{", "const", "inttype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "const", "int", "id", ";", "const", "bool", "id", ";", "}"
+			"{", "const", "inttype", "id", ";", "const", "booltype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "const", "string", "id", "=", "string", ";", "}"
+			"{", "const", "stringtype", "id", "=", "string", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "const", "bool", "id", "=", "id", ";", "const", "char", "id", ";","}"
+			"{", "const", "booltype", "id", "=", "id", ";", "const", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "const", "string", "id", ";", "}", "const", "char", "id", "=", "char", ";", "id", "=", "id", ";", "}"
+			"{", "if", "(", ")", "{", "const", "stringtype", "id", ";", "}", "const", "chartype", "id", "=", "char", ";", "id", "=", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -534,17 +544,17 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_const_declare_test)
 	{
 		InputSequence inputseq = {
-			"{", "cnst", "int", "id", ";", "}"
+			"{", "cnst", "inttype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "const", "id", ";", "const", "bool", "id", ";", "}"
+			"{", "const", "id", ";", "const", "booltype", "id", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "const", "string", "string", "id", "=", "string", ";", "}"
+			"{", "const", "stringtype", "string", "id", "=", "string", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -669,6 +679,45 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 			"{", "if", "(", ")", "{", "}", "else", "{", "print", "(", "string", ")", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
+	}
+
+	BOOST_AUTO_TEST_CASE(correct_arithmetical)
+	{
+		InputSequence inputseq = {
+			"{", "int", "id", "=", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
+		};
+
+		inputseq = {
+			"{", "int", "id", "=", "-", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "int", "id", "=", "-", "(", "int", "+", "id", "-", "id", "*", "int", "/", "id", "[", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_arithmetical)
+	{
+		InputSequence inputseq = {
+			"{", "int", "id", "=", "-", "+", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "int", "id", "=", "-", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "int", ";", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "int", "id", "=", "-", "(", "(", "int", ")", "+", "id", "-", "id", "*", "int", "/", "id", "[", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
 	}
 
 

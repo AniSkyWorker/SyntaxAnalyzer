@@ -184,7 +184,7 @@ protected:
 	int yy_more_len;
 	int yy_more_offset;
 	int yy_prev_more_offset;
-	std::vector<std::string> tokens_vector;
+	std::vector<std::string> m_tokens_vector;
 };
 
 #endif

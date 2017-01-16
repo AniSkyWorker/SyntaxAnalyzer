@@ -26,13 +26,13 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 BOOST_AUTO_TEST_CASE(one_line_sequence)
 {
-	std::vector<std::string> result = { "TYPENAME", "ID", "=", "INT", "-", "INT", ";" };
+	std::vector<std::string> result = { "inttype", "id", "=", "int", "-", "int", ";" };
 	CheckAnalyzerTokens("test1.txt", result);
 }
 
 BOOST_AUTO_TEST_CASE(multiline_sequence)
 {
-	std::vector<std::string> result = { "WHILE", "(", "ID", "<", "INT", ")", "{", "ID", "=", "ID", "-", "INT", ";", "}" };
+	std::vector<std::string> result = { "while", "(", "id", "<", "int", ")", "{", "id", "=", "id", "-", "int", ";", "}" };
 	CheckAnalyzerTokens("test2.txt", result);
 }
 

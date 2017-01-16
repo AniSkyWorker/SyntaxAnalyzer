@@ -1,21 +1,11 @@
 #include "stdafx.h"
 #include "SyntaxAnalyzer.h"
 #include "LRWalker.h"
-#include <algorithm>
 #include "SyntaxExceptions.h"
-#include<stdarg.h>
+#include <algorithm>
 
 namespace
 {
-
-const std::map<Types, std::string> TYPES_MAP =
-{
-	{ Types::BOOL, "bool" },
-	{ Types::INT, "int" },
-	{ Types::CHAR, "char" },
-	{ Types::STRING, "string" },
-	{ Types::FLOAT, "float"}
-};
 
 const std::string START_BLOCK = "{";
 const std::string END_BLOCK = "}";
@@ -33,6 +23,17 @@ const std::string READ = "read";
 const std::string ID = "id";
 const std::string ASSIGMENT = "=";
 const std::string CONST = "const";
+
+namespace tokens
+{
+
+const std::string INT = "int";
+const std::string FLOAT = "float";
+const std::string CHAR = "char";
+const std::string STRING = "string";
+const std::string BOOL = "bool";
+
+}
 
 InputSequence GetSequenceFromSequence(size_t currentPos, size_t length, const InputSequence & inputSeq)
 {
@@ -197,15 +198,15 @@ bool CSyntaxAnalyzer::CheckData(const InputSequence & seq)
 {
 	if (CheckArithmeticExpression(seq)
 		|| CheckTypeWithIndecies(ID, seq)
-		|| CheckOneTokenExpr(TYPES_MAP.at(Types::STRING), seq)
-		|| CheckOneTokenExpr(TYPES_MAP.at(Types::CHAR), seq)
-		|| CheckOneTokenExpr(TYPES_MAP.at(Types::FLOAT), seq)
-		|| CheckOneTokenExpr(TYPES_MAP.at(Types::INT), seq))
+		|| CheckOneTokenExpr(tokens::STRING, seq)
+		|| CheckOneTokenExpr(tokens::CHAR, seq)
+		|| CheckOneTokenExpr(tokens::FLOAT, seq)
+		|| CheckOneTokenExpr(tokens::INT, seq))
 	{
 		return true;
 	}
-	//todo вынести в функцию
-	throw ExpectedSymbolError(seq, { "arithmetical expression", TYPES_MAP.at(Types::STRING), TYPES_MAP.at(Types::CHAR), TYPES_MAP.at(Types::INT), ID });
+
+	throw ExpectedSymbolError(seq, { "arithmetical expression", tokens::STRING, tokens::FLOAT, tokens::CHAR, tokens::INT, ID });
 }
 
 void CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr)
@@ -235,7 +236,7 @@ bool CSyntaxAnalyzer::CheckDeclare()
 		found = std::find_if(TYPES_MAP.begin(), TYPES_MAP.end(), [=](const auto &typePair) { return typePair.second == m_inputSeq[m_currentPos]; });
 	}
 
-	if(found != TYPES_MAP.end() && MakeShiftIfNeeded(found->second))
+	if (found != TYPES_MAP.end() && MakeShiftIfNeeded(found->second))
 	{
 		MakeShiftIfNeeded(ID, true, true);
 		auto seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
@@ -291,12 +292,12 @@ bool CSyntaxAnalyzer::CheckTypeWithIndecies(const std::string & type, const Inpu
 
 bool CSyntaxAnalyzer::CheckString(const InputSequence & seq)
 {
-	return CheckOneTokenExpr(TYPES_MAP.at(STRING), seq, true);
+	return CheckOneTokenExpr(tokens::STRING, seq, true);
 }
 
 bool CSyntaxAnalyzer::CheckChar(const InputSequence & seq)
 {
-	return CheckOneTokenExpr(TYPES_MAP.at(CHAR), seq, true);
+	return CheckOneTokenExpr(tokens::CHAR, seq, true);
 }
 
 bool CSyntaxAnalyzer::ChecIndexStruct(const InputSequence & seq, size_t start)
@@ -324,13 +325,13 @@ bool CSyntaxAnalyzer::CheckIndex(const InputSequence & sequence, size_t & start)
 			{
 				size_t exprLen = foundBracketItr - (sequence.begin() + start);
 				auto seq = GetSequenceFromSequence(start, exprLen, sequence);
-				if (CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(TYPES_MAP.at(INT), seq))
+				if (CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(tokens::INT, seq))
 				{
 					start += 2;
 					return true;
 				}
 
-				throw ExpectedSymbolError(sequence, { ID, TYPES_MAP.at(INT) });
+				throw ExpectedSymbolError(sequence, { ID, tokens::INT });
 			}
 
 			throw ExpectedSymbolError(sequence, { INDEX_CLOSE });

@@ -26,3 +26,11 @@ std::string ExpectedTokensToStr(const std::vector<std::string>& tokens)
 
 	return result;
 }
+
+ExpectedSymbolError::ExpectedSymbolError(const std::vector<std::string>& tokens, const std::vector<std::string>& expectred)
+	: runtime_error("Error. Expected " + ExpectedTokensToStr(expectred) + " in sequnence: " + TokensToStr(tokens))
+{}
+
+UnexpectedSymbolError::UnexpectedSymbolError(const std::vector<std::string>& unexpected, std::string & after)
+	: runtime_error("Unexpected symbol: " + TokensToStr(unexpected) + " after: \"" + after + "\"")
+{}
