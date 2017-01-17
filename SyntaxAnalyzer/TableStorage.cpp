@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TableStorage.h"
+#include "JsonAgregator.h"
 
 CTableStorage::CTableStorage()
 {
@@ -19,5 +20,5 @@ const LRTable & CTableStorage::GetLRTable(TableType type)
 
 void CTableStorage::LoadTables()
 {
-
+	m_LL1Tables.emplace(TableType::arithmetic, CJsonAgregator::ReadLL1TableFromFile("arithmetic1.json"));
 }

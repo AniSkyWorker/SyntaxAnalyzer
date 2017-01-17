@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 		inputseq = {
 			"{", "(", "id", "=", "string", ";", ")", "}"
 		};
-		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
 
 		inputseq = {
 			"{", "id", "(", "=", ";", "}"
@@ -684,17 +684,25 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_arithmetical)
 	{
 		InputSequence inputseq = {
-			"{", "int", "id", "=", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
-		};
-
-		inputseq = {
-			"{", "int", "id", "=", "-", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
+			"{", "inttype", "id", "=", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
 		};
 
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "int", "id", "=", "-", "(", "int", "+", "id", "-", "id", "*", "int", "/", "id", "[", "int", "]", ")", ";", "}"
+			"{", "inttype", "id", "=", "-", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "inttype", "id", "=", "-", "(", "int", "+", "id", "-", "id", "*", "int", "/", "id", "[", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "inttype", "id", "=", "int", "+", "id", "[", "int", "]", ";", "}"
 		};
 
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
@@ -703,18 +711,18 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_arithmetical)
 	{
 		InputSequence inputseq = {
-			"{", "int", "id", "=", "-", "+", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
+			"{", "inttype", "id", "=", "-", "+", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "[", "int", "]", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
 
 		inputseq = {
-			"{", "int", "id", "=", "-", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "int", ";", "}"
+			"{", "inttype", "id", "=", "-", "(", "int", "+", "(", "-", "int", ")", ")", "*", "id", "int", ";", "}"
 		};
 
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
 
 		inputseq = {
-			"{", "int", "id", "=", "-", "(", "(", "int", ")", "+", "id", "-", "id", "*", "int", "/", "id", "[", "int", "]", ")", ";", "}"
+			"{",  "inttype", "id", "=", "(", "(", "int", ")", "+", "id", "-", "id", "*", "int", "/", "id", "[", "-", "int", "]", ")", ";", "}"
 		};
 
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);

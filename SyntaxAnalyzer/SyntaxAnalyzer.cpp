@@ -96,12 +96,13 @@ void CSyntaxAnalyzer::CheckMainStruct()
 	{
 		CheckMainStruct();
 	}
-	else if (size_t nextExprLen = GetNextExpressionLength() != 0)
+	else if (GetNextExpressionLength() != 0)
 	{
+		size_t nextExprLen = GetNextExpressionLength();
 		InputSequence seq = GetSequenceFromSequence(m_currentPos, nextExprLen, m_inputSeq);
 		if (CheckArithmeticExpression(seq) /*BoolExpression(seq)*/) //todo when realized
 		{
-			m_currentPos += nextExprLen;
+			m_currentPos += seq.size();
 			CheckMainStruct();
 		}
 	}
@@ -166,9 +167,9 @@ bool CSyntaxAnalyzer::CheckBoolExpression(const InputSequence & /*seq*/)
 	return true;//m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(TableType::boolean));
 }
 
-bool CSyntaxAnalyzer::CheckArithmeticExpression(const InputSequence & /*seq*/)
+bool CSyntaxAnalyzer::CheckArithmeticExpression(const InputSequence & seq)
 {
-	return false;//LRWalker::CheckInputSequence(seq, m_tableStorage.GetLRTable(TableType::arithmetic));
+	return m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(TableType::arithmetic));
 }
 
 bool CSyntaxAnalyzer::CheckRead()
@@ -196,12 +197,12 @@ bool CSyntaxAnalyzer::CheckPrint()
 //TODO выпилить бул и int они будут в таблице
 bool CSyntaxAnalyzer::CheckData(const InputSequence & seq)
 {
-	if (CheckArithmeticExpression(seq)
-		|| CheckTypeWithIndecies(ID, seq)
+	if (CheckTypeWithIndecies(ID, seq)
 		|| CheckOneTokenExpr(tokens::STRING, seq)
 		|| CheckOneTokenExpr(tokens::CHAR, seq)
 		|| CheckOneTokenExpr(tokens::FLOAT, seq)
-		|| CheckOneTokenExpr(tokens::INT, seq))
+		|| CheckOneTokenExpr(tokens::INT, seq)
+		|| CheckArithmeticExpression(seq))
 	{
 		return true;
 	}
@@ -227,7 +228,7 @@ void CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBrackets
 //todo рефакторить
 bool CSyntaxAnalyzer::CheckDeclare()
 {
-	MakeShiftIfNeeded(CONST);
+	bool isConst = MakeShiftIfNeeded(CONST);
 
 	auto found = TYPES_MAP.end();
 
@@ -242,7 +243,10 @@ bool CSyntaxAnalyzer::CheckDeclare()
 		auto seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
 		if (MakeShiftIfNeeded(ASSIGMENT))
 		{
-			seq.erase(seq.begin());
+			if (!seq.empty())
+			{
+				seq.erase(seq.begin());
+			}
 			if (CheckTypeWithIndecies(ID, seq) || (m_checkTypesMap.at(found->first))(seq))
 			{
 				m_currentPos += seq.size();
@@ -260,6 +264,12 @@ bool CSyntaxAnalyzer::CheckDeclare()
 		MakeShiftIfNeeded(LINE_END, true, true);
 		return true;
 	}
+
+	if (isConst)
+	{
+		throw ExpectedSymbolError({ GetSequenceElement(m_inputSeq, m_currentPos) }, { "type name" });
+	}
+
 	return false;
 }
 

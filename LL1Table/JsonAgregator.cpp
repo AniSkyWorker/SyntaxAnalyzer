@@ -26,6 +26,10 @@ void CJsonAgregator::WriteLL1TableToFile(const LL1Table & table, const std::stri
 LL1Table CJsonAgregator::ReadLL1TableFromFile(const std::string & filename)
 {
 	ifstream input(filename);
+	if (!input.is_open())
+	{
+		throw std::runtime_error("Cannot open file with table:" + filename);
+	}
 	json jsonTable(input);
 	LL1Table table;
 	for (auto row : jsonTable)

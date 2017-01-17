@@ -30,16 +30,16 @@ namespace
 class CUnexpectedSymbolsError : public std::runtime_error
 {
 public:
-	CUnexpectedSymbolsError(const std::vector<std::string>& expectedSym, const std::string & unexpectedSym, size_t index)
-		: runtime_error("Error. Expected [" + GetSequenceSymbol(expectedSym) + "] but (" + unexpectedSym +"[" + std::to_string(index + 1) + "]" + ") was given!")
+	CUnexpectedSymbolsError(const std::vector<std::string>& expectedSym, const std::string & unexpectedSym)
+		: runtime_error("Error. Expected [" + GetSequenceSymbol(expectedSym) + "] but (" + unexpectedSym + ") was given!")
 	{}
 };
 
 class CNoTransitionError : public std::runtime_error
 {
 public:
-	CNoTransitionError(const std::vector<std::string>& noTransitionRuleSequence)
-		: runtime_error("No transition from [" + GetSequenceSymbol(noTransitionRuleSequence) + "]")
+	CNoTransitionError(const std::vector<std::string>& noTransitionRuleSequence, unsigned rowCount)
+		: runtime_error("No transition from [" + GetSequenceSymbol(noTransitionRuleSequence) + "]" + "(" + std::to_string(rowCount) + ")")
 	{}
 };
 
@@ -50,13 +50,17 @@ bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, con
 		m_stack.pop();
 	}
 
+	if (inputStr.empty())
+	{
+		return false;
+	}
+
 	size_t currentSymbolIndex = 0;
 	size_t tableRowIndex = 0;
 	LL1TableString currentTableRow = table[tableRowIndex];
 	std::string currentSymbol = inputStr[currentSymbolIndex];
 
-	for (;!(table[tableRowIndex].end && currentSymbolIndex == inputStr.size() - 1);
-		currentTableRow = table[tableRowIndex], currentSymbol = inputStr[currentSymbolIndex])
+	for (;currentSymbolIndex < inputStr.size(); currentTableRow = table[tableRowIndex], currentSymbol = inputStr[currentSymbolIndex])
 	{
 		if (CheckSymbolInInput(currentSymbol, currentTableRow.input))
 		{
@@ -70,7 +74,20 @@ bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, con
 				m_stack.push(tableRowIndex + 1);
 			}
 
-			tableRowIndex = GetCurrentTransition(currentTableRow);
+			if (currentSymbolIndex == inputStr.size())
+			{
+				//todo close brackets
+				if (table[tableRowIndex].end)
+				{
+					return true;
+				}
+				else
+				{
+					throw CUnexpectedSymbolsError(table[GetCurrentTransition(currentTableRow, tableRowIndex)].input, "expression end");
+				}
+			}
+
+			tableRowIndex = GetCurrentTransition(currentTableRow, tableRowIndex);
 		}
 		else if (!currentTableRow.error)
 		{
@@ -78,15 +95,18 @@ bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, con
 		}
 		else
 		{
-			throw CUnexpectedSymbolsError(table[tableRowIndex].input, currentSymbol, currentSymbolIndex);
+			if (tableRowIndex != 0)
+			{
+				throw CUnexpectedSymbolsError(table[tableRowIndex].input, currentSymbol);
+			}
+			return false;
 		}
 	}
 	
-	//TODO чистить стэк
-	return true;
+	return false;
 }
 
-size_t LL1Walker::GetCurrentTransition(const LL1TableString & row)
+size_t LL1Walker::GetCurrentTransition(const LL1TableString & row, unsigned currentRowCount)
 {
 	if (row.transition != -1)
 	{
@@ -100,6 +120,6 @@ size_t LL1Walker::GetCurrentTransition(const LL1TableString & row)
 	}
 	else
 	{
-		throw CNoTransitionError(row.input);
+		throw CNoTransitionError(row.input, currentRowCount);
 	}
 }
