@@ -1,0 +1,14 @@
+{
+	bool flag = true;
+	int i = 0;
+	const int checked = 10;
+	if(flag)
+	{
+		i = i + 1;
+	}
+	elif(i == checked)
+	{
+		i = 0;
+	}
+	print(i);
+}

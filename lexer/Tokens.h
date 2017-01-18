@@ -1,5 +1,8 @@
 #pragma once
 
+namespace tokens
+{
+
 const std::string START_BLOCK = "{";
 const std::string END_BLOCK = "}";
 const std::string OPEN_BRACKET = "(";
@@ -16,14 +19,21 @@ const std::string READ = "read";
 const std::string ID = "id";
 const std::string ASSIGMENT = "=";
 const std::string CONST = "const";
+const std::string BOOLTYPE = "booltype";
+const std::string INTTYPE = "inttype";
+const std::string CHARTYPE = "chartype";
+const std::string STRINGTYPE = "stringtype";
+const std::string FLOATTYPE = "floattype";
 
-namespace tokens
+namespace type
 {
 
-	const std::string INT = "int";
-	const std::string FLOAT = "float";
-	const std::string CHAR = "char";
-	const std::string STRING = "string";
-	const std::string BOOL = "bool";
+const std::string INT = "int";
+const std::string FLOAT = "float";
+const std::string CHAR = "char";
+const std::string STRING = "string";
+const std::string BOOL = "bool";
+
+}
 
 }

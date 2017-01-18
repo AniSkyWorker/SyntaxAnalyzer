@@ -4,6 +4,8 @@
 #include "SyntaxExceptions.h"
 #include <algorithm>
 
+using namespace tokens;
+
 namespace
 {
 
@@ -179,13 +181,13 @@ bool CSyntaxAnalyzer::CheckData(const InputSequence & seq)
 	if (GetResultOfTableCalculation(seq, TableType::arithmetic, false)
 		|| GetResultOfTableCalculation(seq, TableType::boolean, false)
 		|| CheckTypeWithIndecies(ID, seq)
-		|| CheckOneTokenExpr(tokens::STRING, seq)
-		|| CheckOneTokenExpr(tokens::CHAR, seq))
+		|| CheckOneTokenExpr(type::STRING, seq)
+		|| CheckOneTokenExpr(type::CHAR, seq))
 	{
 		return true;
 	}
 
-	throw ExpectedSymbolError(seq, { "arithmetical expression", tokens::STRING, tokens::FLOAT, tokens::CHAR, tokens::INT, ID });
+	throw ExpectedSymbolError(seq, { "arithmetical expression", type::STRING, type::CHAR, ID });
 }
 
 void CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBracketsExpr)
@@ -279,12 +281,12 @@ bool CSyntaxAnalyzer::CheckTypeWithIndecies(const std::string & type, const Inpu
 
 bool CSyntaxAnalyzer::CheckString(const InputSequence & seq)
 {
-	return CheckOneTokenExpr(tokens::STRING, seq, true);
+	return CheckOneTokenExpr(type::STRING, seq, true);
 }
 
 bool CSyntaxAnalyzer::CheckChar(const InputSequence & seq)
 {
-	return CheckOneTokenExpr(tokens::CHAR, seq, true);
+	return CheckOneTokenExpr(type::CHAR, seq, true);
 }
 
 bool CSyntaxAnalyzer::ChecIndexStruct(const InputSequence & seq, size_t start)
@@ -308,12 +310,12 @@ bool CSyntaxAnalyzer::CheckIndex(const InputSequence & sequence, size_t & start)
 			{
 				size_t exprLen = foundBracketItr - (sequence.begin() + start);
 				auto seq = GetSequenceFromSequence(start, exprLen, sequence);
-				if (CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(tokens::INT, seq))
+				if (CheckOneTokenExpr(ID, seq) || CheckOneTokenExpr(type::INT, seq))
 				{
 					start += 2;
 					return true;
 				}
-				throw ExpectedSymbolError(sequence, { ID, tokens::INT });
+				throw ExpectedSymbolError(sequence, { ID, type::INT });
 			}
 			throw ExpectedSymbolError(sequence, { INDEX_CLOSE });
 		}
@@ -334,5 +336,5 @@ size_t CSyntaxAnalyzer::GetNextExpressionLength(const std::string & separator)
 
 bool CSyntaxAnalyzer::GetResultOfTableCalculation(const InputSequence & seq, TableType type, bool exceptions)
 {
-	return m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(type), exceptions);
+	return m_lWalker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(type), exceptions);
 }

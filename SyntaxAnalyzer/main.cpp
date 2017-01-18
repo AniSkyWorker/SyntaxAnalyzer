@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 			return 1;
 		}
 		CSyntaxAnalyzer synAnalyzer;
-		synAnalyzer.CheckInputSequence(GetLexerTokens("example.txt"));
+		synAnalyzer.CheckInputSequence(GetLexerTokens(argv[1]));
 	}
 	catch (const std::exception & exc)
 	{ 

@@ -51,11 +51,11 @@ private:
 	bool CheckIndex(const InputSequence & seq, size_t & start);
 	bool CheckTypeWithIndecies(const std::string & type, const InputSequence & seq);
 
-	size_t GetNextExpressionLength(const std::string & separator = LINE_END);
+	size_t GetNextExpressionLength(const std::string & separator = tokens::LINE_END);
 
 	bool GetResultOfTableCalculation(const InputSequence & seq, TableType type, bool exceptions = true);
 
-	LL1Walker m_LL1Walker;
+	LL1Walker m_lWalker;
 	CTableStorage m_tableStorage;
 
 	InputSequence m_inputSeq;

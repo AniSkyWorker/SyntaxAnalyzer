@@ -38,7 +38,7 @@ public:
 class CNoTransitionError : public std::runtime_error
 {
 public:
-	CNoTransitionError(const std::vector<std::string>& noTransitionRuleSequence, unsigned rowCount)
+	CNoTransitionError(const std::vector<std::string>& noTransitionRuleSequence, size_t rowCount)
 		: runtime_error("No transition from [" + GetSequenceSymbol(noTransitionRuleSequence) + "]" + "(" + std::to_string(rowCount) + ")")
 	{}
 };
@@ -118,7 +118,7 @@ bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, con
 
 }
 
-size_t LL1Walker::GetCurrentTransition(const LL1TableString & row, unsigned currentRowCount)
+size_t LL1Walker::GetCurrentTransition(const LL1TableString & row, size_t currentRowCount)
 {
 	if (row.transition != -1)
 	{

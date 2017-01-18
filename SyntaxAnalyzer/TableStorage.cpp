@@ -17,9 +17,8 @@ const LRTable & CTableStorage::GetLRTable(TableType type)
 	return m_LRTables.at(type);
 }
 
-
 void CTableStorage::LoadTables()
 {
-	m_LL1Tables.emplace(TableType::arithmetic, CJsonAgregator::ReadLL1TableFromFile("arithmetic1.json"));
-	m_LL1Tables.emplace(TableType::boolean, CJsonAgregator::ReadLL1TableFromFile("bool.json"));
+	m_LL1Tables.emplace(TableType::arithmetic, CJsonAgregator::ReadLL1TableFromFile("tables/arithmetic1.json"));
+	m_LL1Tables.emplace(TableType::boolean, CJsonAgregator::ReadLL1TableFromFile("tables/bool.json"));
 }
