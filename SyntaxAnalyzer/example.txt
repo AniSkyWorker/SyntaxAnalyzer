@@ -1,0 +1,57 @@
+{
+	const int matrix_dimension = 2;
+	float arr1[2][2];
+	arr1[0][0] = 1.1;
+	arr1[0][1] = 1.2;
+	arr1[1][0] = 2.1;
+	arr1[1][1] = 2.2;
+	float arr2[2][2];
+	arr2[0][0] = 1.1;
+	arr2[0][1] = 1.2;
+	arr2[1][0] = 2.1;
+	arr2[1][1] = 2.2;
+	int i = 0;
+	int j;
+	while (i < matrix_dimension)
+	{
+		j = 0;
+		while (j < matrix_dimension)
+		{
+			read(arr2[i][j]);
+			j = j + 1;
+		}
+		i = i + 1;
+	}
+
+	float res[2][2];
+	arr2[0][0] = 0.0;
+	arr2[0][1] = 0.0;
+	arr2[1][0] = 0.0;
+	arr2[1][1] = 0.0;
+	i = 0;
+	while (i < matrix_dimension)
+	{
+		j = 0;
+		while (j < matrix_dimension)
+		{
+			float a = res[i][j];
+			float b = arr1[i][j];
+			float c = arr[j][i];
+			res[i][j] = a + b + c;
+			j = j + 1;
+		}
+		i = i + 1;
+	}
+
+	i = 0;
+	while (i < matrix_dimension)
+	{
+		j = 0;
+		while (j < matrix_dimension)
+		{
+			print(res[i][j]);
+			j = j + 1;
+		}
+		i = i + 1;
+	}
+}

@@ -4,48 +4,43 @@
     <Filter Include="SyntaxAnalyzer">
       <UniqueIdentifier>{3ff49376-277e-4911-9bfb-c9438c2a813f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{e534dbc7-7695-41c8-998e-45a7b1f12611}</UniqueIdentifier>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{1ca20ff1-59ee-48af-9154-3e839d8c1a6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Types">
+    <Filter Include="SyntaxAnalyzer\Types">
       <UniqueIdentifier>{2e1d37fd-3ec1-4ef0-b3ca-cca3c44adebd}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SyntaxAnalyzer.h">
       <Filter>SyntaxAnalyzer</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Types.h">
-      <Filter>Types</Filter>
+      <Filter>SyntaxAnalyzer\Types</Filter>
     </ClInclude>
-    <ClInclude Include="TableStorage.h" />
-    <ClInclude Include="TableType.h" />
     <ClInclude Include="SyntaxExceptions.h">
       <Filter>SyntaxAnalyzer</Filter>
     </ClInclude>
+    <ClInclude Include="TableStorage.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="TableType.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SyntaxAnalyzer.cpp">
       <Filter>SyntaxAnalyzer</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TableStorage.cpp" />
     <ClCompile Include="SyntaxExceptions.cpp">
       <Filter>SyntaxAnalyzer</Filter>
     </ClCompile>
+    <ClCompile Include="TableStorage.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
 </Project>

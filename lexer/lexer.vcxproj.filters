@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Flex">
-      <UniqueIdentifier>{8c5df5cc-9654-435f-b90d-f3c05ef917fb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{1fe78714-710d-4caf-97ae-86746f545ab2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lexer">
+      <UniqueIdentifier>{8c5df5cc-9654-435f-b90d-f3c05ef917fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tokens">
+      <UniqueIdentifier>{736e7002-aace-41e3-a645-6530462a03d7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -13,10 +16,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FlexLexer.h">
-      <Filter>Flex</Filter>
+      <Filter>lexer</Filter>
     </ClInclude>
     <ClInclude Include="unistd.h">
-      <Filter>Flex</Filter>
+      <Filter>lexer</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Source</Filter>
@@ -24,13 +27,16 @@
     <ClInclude Include="targetver.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Tokens.h">
+      <Filter>Tokens</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="FlexLexer.cpp">
-      <Filter>Flex</Filter>
+      <Filter>lexer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

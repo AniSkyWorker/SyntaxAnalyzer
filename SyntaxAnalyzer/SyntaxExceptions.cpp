@@ -28,7 +28,7 @@ std::string ExpectedTokensToStr(const std::vector<std::string>& tokens)
 }
 
 ExpectedSymbolError::ExpectedSymbolError(const std::vector<std::string>& tokens, const std::vector<std::string>& expectred)
-	: runtime_error("Error. Expected " + ExpectedTokensToStr(expectred) + " in sequnence: " + TokensToStr(tokens))
+	: runtime_error("Error. Expected " + ExpectedTokensToStr(expectred) + " but given: " + TokensToStr(tokens))
 {}
 
 UnexpectedSymbolError::UnexpectedSymbolError(const std::vector<std::string>& unexpected, std::string & after)

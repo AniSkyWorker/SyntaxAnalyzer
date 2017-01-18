@@ -43,67 +43,79 @@ public:
 	{}
 };
 
-bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, const LL1Table & table)
+bool LL1Walker::CheckInputSequence(const std::vector<std::string>& inputStr, const LL1Table & table, bool except)
 {
-	while (!m_stack.empty())
+	try
 	{
-		m_stack.pop();
-	}
+		while (!m_stack.empty())
+		{
+			m_stack.pop();
+		}
 
-	if (inputStr.empty())
+		if (inputStr.empty())
+		{
+			return false;
+		}
+
+		size_t currentSymbolIndex = 0;
+		size_t tableRowIndex = 0;
+		LL1TableString currentTableRow = table[tableRowIndex];
+		std::string currentSymbol = inputStr[currentSymbolIndex];
+
+		for (;currentSymbolIndex < inputStr.size(); currentTableRow = table[tableRowIndex], currentSymbol = inputStr[currentSymbolIndex])
+		{
+			if (CheckSymbolInInput(currentSymbol, currentTableRow.input))
+			{
+				if (currentTableRow.shift)
+				{
+					currentSymbolIndex++;
+				}
+
+				if (currentTableRow.stack)
+				{
+					m_stack.push(tableRowIndex + 1);
+				}
+
+				if (currentSymbolIndex == inputStr.size())
+				{
+					//todo close brackets
+					if (table[tableRowIndex].end)
+					{
+						return true;
+					}
+					else
+					{
+						throw CUnexpectedSymbolsError(table[GetCurrentTransition(currentTableRow, tableRowIndex)].input, "expression end");
+					}
+				}
+
+				tableRowIndex = GetCurrentTransition(currentTableRow, tableRowIndex);
+			}
+			else if (!currentTableRow.error)
+			{
+				tableRowIndex++;
+			}
+			else
+			{
+				if (tableRowIndex != 0)
+				{
+					throw CUnexpectedSymbolsError(table[tableRowIndex].input, currentSymbol);
+				}
+				return false;
+			}
+		}
+		return false;
+	}
+	catch (const std::exception& exc)
 	{
+		if (except)
+		{
+			throw exc;
+		}
 		return false;
 	}
 
-	size_t currentSymbolIndex = 0;
-	size_t tableRowIndex = 0;
-	LL1TableString currentTableRow = table[tableRowIndex];
-	std::string currentSymbol = inputStr[currentSymbolIndex];
 
-	for (;currentSymbolIndex < inputStr.size(); currentTableRow = table[tableRowIndex], currentSymbol = inputStr[currentSymbolIndex])
-	{
-		if (CheckSymbolInInput(currentSymbol, currentTableRow.input))
-		{
-			if (currentTableRow.shift)
-			{
-				currentSymbolIndex++;
-			}
-
-			if (currentTableRow.stack)
-			{
-				m_stack.push(tableRowIndex + 1);
-			}
-
-			if (currentSymbolIndex == inputStr.size())
-			{
-				//todo close brackets
-				if (table[tableRowIndex].end)
-				{
-					return true;
-				}
-				else
-				{
-					throw CUnexpectedSymbolsError(table[GetCurrentTransition(currentTableRow, tableRowIndex)].input, "expression end");
-				}
-			}
-
-			tableRowIndex = GetCurrentTransition(currentTableRow, tableRowIndex);
-		}
-		else if (!currentTableRow.error)
-		{
-			tableRowIndex++;
-		}
-		else
-		{
-			if (tableRowIndex != 0)
-			{
-				throw CUnexpectedSymbolsError(table[tableRowIndex].input, currentSymbol);
-			}
-			return false;
-		}
-	}
-	
-	return false;
 }
 
 size_t LL1Walker::GetCurrentTransition(const LL1TableString & row, unsigned currentRowCount)

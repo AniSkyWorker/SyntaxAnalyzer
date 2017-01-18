@@ -2,6 +2,7 @@
 #include "SyntaxAnalyzer.h"
 #include "FlexLexer.h"
 #include <fstream>
+#include "JsonAgregator.h"
 
 std::vector<std::string> GetLexerTokens(const std::string & filename)
 {
@@ -25,12 +26,11 @@ int main(int argc, char * argv[])
 			std::cout << "Usage: syntaxAnalyzer.exe <filename>" << std::endl;
 			return 1;
 		}
-
 		CSyntaxAnalyzer synAnalyzer;
-		synAnalyzer.CheckInputSequence(GetLexerTokens(argv[1]));
+		synAnalyzer.CheckInputSequence(GetLexerTokens("example.txt"));
 	}
 	catch (const std::exception & exc)
-	{
+	{ 
 		std::cout << exc.what();
 		return 1;
 	}

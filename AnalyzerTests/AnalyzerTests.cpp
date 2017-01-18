@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_if_statement2)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "}"
+			"{", "if", "(", "bool", ")", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"if", "(", ")", "}"
+			"if", "(", "bool", ")", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -61,31 +61,15 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_primitive_bool_in_if)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
 
-	//BOOST_AUTO_TEST_CASE(incorrect_brackets_bool_in_if)
-	//{
-	//	inputSeq inputseq = {
-	//		"{", "if", "(", ")", ")", "{", "}", "}"
-	//	};
-	//	BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
-	//}
-
-	//BOOST_AUTO_TEST_CASE(incorrect_brackets_bool_in_if2)
-	//{
-	//	inputSeq inputseq = {
-	//		"{", "if", "(", "(", ")", "{", "}", "}"
-	//	};
-	//	BOOST_CHECK(!analyzer.CheckInputSequence(inputseq));
-	//}
-
 	BOOST_AUTO_TEST_CASE(correct_sequence_inside_if_state)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}","}", "}"
+			"{", "if", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}","}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -93,7 +77,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "if", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -101,7 +85,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state_and_line_ends)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "}"
 	};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -109,12 +93,12 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_sequence_of_if_state_and_some_line_ends)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", "id", "int", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -122,7 +106,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_some_line_ends)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "print", "(", "strin", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "print", "(", "strin", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -130,12 +114,12 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_line_ends)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ";", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ";", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -143,7 +127,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_line_ends2)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "if", "(", ")", "{", "print", "(", "string", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "if", "(", "bool", ")", "{", "print", "(", "string", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -151,7 +135,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_if_state_and_line_ends3)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "print", "(", "string", "print", "(", "string", ")", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "print", "(", "string", "print", "(", "string", ")", ";", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -159,7 +143,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_end_lines)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "print", ")", ";", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "print", ")", ";", ";", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -167,7 +151,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_sequence_of_closing_brackets_end_lines)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "print", ")", ")", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "print", ")", ")", ";", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	} 
@@ -198,7 +182,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_assigment_test2)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "id", "=", "id", ";", "id", "=", "string", ";", "}", "id", "=", "int", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "id", "=", "id", ";", "id", "=", "string", ";", "}", "id", "=", "int", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -206,7 +190,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_assigment_test1)
 	{
 		InputSequence inputseq = {
-			"{", "id", "=", "id", "(", ";", "}"
+			"{", "id", "=", "id", ")", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
@@ -239,7 +223,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_assigment_test2)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "id", "}", "id", "=", "int", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "id", "}", "id", "=", "int", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -249,7 +233,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 		InputSequence inputseq = {
 			"{", "id", "=", "int", ";",  "id", "=", "int", ";", "id", "=", "id", "=", "int", ";", "}"
 		};
-		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
 	}
 
 	BOOST_AUTO_TEST_CASE(correct_declare_test)
@@ -288,7 +272,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_declare_test2)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{","stringtype", "id", ";", "}", "chartype", "id", "=", "char", ";", "id", "=", "id", ";", "}"
+			"{", "if", "(", "bool", ")", "{","stringtype", "id", ";", "}", "chartype", "id", "=", "char", ";", "id", "=", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -367,6 +351,31 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 			"{", "id", "=", "id","[", "id", "]","[", "int", "]", ";", "chartype", "id", ";","}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "read", "(", "id", "[", "id", "]","[", "id", "]", ")", ";","}"
+		};
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "id", "[", "id", "]","[", "id", "]", "=", "int", ";","}"
+		};
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "id", "[", "id", "]","[", "id", "]", "=", "float", ";","}"
+		};
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "id", "[", "id", "]","[", "id", "]", "=", "id", ";","}"
+		};
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "id", "[", "id", "]", "=", "id", ";","}"
+		};
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
 
 	BOOST_AUTO_TEST_CASE(incorrect_index_test)
@@ -399,7 +408,26 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 		inputseq = {
 			"{", "id", "=", "id","[", "]","[", "int", "]", ";", "chartype", "id", ";","}"
 		};
-		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{","[", "id", "]","[", "id", "]", "=", "int", ";","}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "id", "[", "id","[", "id", "]", "=", "float", ";","}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "id", "[", "id", "]","[", "id", "]", "id", ";","}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+		inputseq = {
+			"{", "id", "[", "id", "]","[", "id", "]", "id", ";","}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
 	}
 
 	BOOST_AUTO_TEST_CASE(correct_read_test)
@@ -420,7 +448,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "while", "(", "!stream.empty()", ")", "{", "read", "(", "int", ")", ";", "}", "}"
+			"{", "while", "(", "not", "bool", ")", "{", "read", "(", "int", ")", ";", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
@@ -536,7 +564,7 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "const", "stringtype", "id", ";", "}", "const", "chartype", "id", "=", "char", ";", "id", "=", "id", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "const", "stringtype", "id", ";", "}", "const", "chartype", "id", "=", "char", ";", "id", "=", "id", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -562,27 +590,27 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_elif)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "}", "elif", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "}", "elif", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "if", "(", ")", "{", "}" ,"elif", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "if", "(", "bool", ")", "{", "}" ,"elif", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", ")", "{", "read", "(", "string", ")", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", "bool", ")", "{", "read", "(", "string", ")", ";", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", ")", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", "bool", ")", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -590,32 +618,32 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_elif)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "elf", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elf", "(", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}", "elif", "(", ")", "}", "}", "elif", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "}", "}", "elif", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "if", "(", ")", "{", "}" ,"elif", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}" ,"elif", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", ")", "{", "read", "(", "string", ")", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", "bool", ")", "{", "read", "(", "string", ")", ";", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "print", "(", "string", ")", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", ")", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "print", "(", "string", ")", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","elif", "(", "bool", ")", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "if", "(", ")", "{", "}" ,"else", "{", "}", "elif", "(", ")", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}" ,"else", "{", "}", "elif", "(", "bool", ")", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -623,32 +651,32 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(correct_else)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}", "else", "{", "}", "}", "else", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}", "else", "{", "}", "}", "else", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "}", "if", "(", ")", "{", "}" ,"else", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "}", "if", "(", "bool", ")", "{", "}" ,"else", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "else", "{", "}", "if", "(", ")", "{", "}", "elif", "(", ")", "{", "}", "elif", "(", ")", "{", "}","else", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "else", "{", "}", "if", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}", "elif", "(", "bool", ")", "{", "}","else", "{", "}", "}"
 		};
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
@@ -656,27 +684,27 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 	BOOST_AUTO_TEST_CASE(incorrect_else)
 	{
 		InputSequence inputseq = {
-			"{", "if", "(", ")", "{", "}", "els", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "els", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "if", "(", ")", "{", "}", "else", "}", "}", "else", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "if", "(", "bool", ")", "{", "}", "else", "}", "}", "else", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "if", "(", ")", "{", "}" ,"else", "{", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "if", "(", "bool", ")", "{", "}" ,"else", "{", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "print", "(", "string", ")", ";", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", "}", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "print", "(", "string", ")", ";", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", "}", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 
 		inputseq = {
-			"{", "if", "(", ")", "{", "}", "else", "{", "print", "(", "string", ")", "}", "if", "(", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
+			"{", "if", "(", "bool", ")", "{", "}", "else", "{", "print", "(", "string", ")", "}", "if", "(", "bool", ")", "{", "print", "(", "string", ")", ";", "}","else", "{", "read", "(", "string", ")", ";", "}", "print", "(", "string", ")", ";", "}"
 		};
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), ExpectedSymbolError);
 	}
@@ -706,6 +734,12 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 		};
 
 		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "int", "+", "id", "[", "int", "]", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
 	}
 
 	BOOST_AUTO_TEST_CASE(incorrect_arithmetical)
@@ -723,6 +757,83 @@ BOOST_AUTO_TEST_SUITE(base_tests)
 
 		inputseq = {
 			"{",  "inttype", "id", "=", "(", "(", "int", ")", "+", "id", "-", "id", "*", "int", "/", "id", "[", "-", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "(", "(", "int", ")", "+", "id", "-", "id", "*", "int", "/", "id", "[", "-", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "int", "+", "id", "[", "int", "]", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+	}
+
+	BOOST_AUTO_TEST_CASE(correct_bool)
+	{
+		InputSequence inputseq = {
+			"{", "booltype", "id", "=", "(", "id", "equal", "(", "not", "bool", ")", ")", "or", "id",";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "booltype", "id", "=", "not", "(", "id", "equal", "(", "not", "bool", ")", ")", "or", "id", "[", "int", "]", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "booltype", "id", "=", "not", "(", "id", "equal", "id", "or", "bool", "or", "bool", "equal", "(","not", "id", "[", "int", "]", ")", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "booltype", "id", "=", "id", "equal", "id", "[", "int", "]", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{", "id", "equal", "id", "[", "int", "]", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+
+		inputseq = {
+			"{",  "booltype", "id", "=", "(", "(", "id", ")", "more", "id", "less", "id", "more", "bool", "equal", "id", "[", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_NO_THROW(analyzer.CheckInputSequence(inputseq));
+	}
+
+	BOOST_AUTO_TEST_CASE(incorrect_bool)
+	{
+		InputSequence inputseq = {
+			"{", "booltype", "id", "=", "not", "or", "(", "bool", "less", "(", "not", "id", ")", ")", "more", "id", "[", "int", "]", ";", "}"
+		};
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "booltype", "id", "=", "not", "(", "bool", "less", "(", "not", "id", ")", ")", "more", "id", "bool", ";", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{",  "booltype", "id", "=", "(", "(", "id", ")", "more", "id", "less", "id", "more", "bool", "equal", "id", "[", "not", "int", "]", ")", ";", "}"
+		};
+
+		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);
+
+		inputseq = {
+			"{", "id", "equal", "id", "[", "int", "]", "}"
 		};
 
 		BOOST_REQUIRE_THROW(analyzer.CheckInputSequence(inputseq), std::exception);

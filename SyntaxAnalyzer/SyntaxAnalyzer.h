@@ -5,6 +5,7 @@
 #include "LL1Walker.h"
 #include "Types.h"
 #include "TableStorage.h"
+#include "Tokens.h"
 
 typedef std::vector<std::string> InputSequence;
 typedef std::function<bool(const InputSequence &)> CheckSequenceFunc;
@@ -50,7 +51,9 @@ private:
 	bool CheckIndex(const InputSequence & seq, size_t & start);
 	bool CheckTypeWithIndecies(const std::string & type, const InputSequence & seq);
 
-	size_t GetNextExpressionLength();
+	size_t GetNextExpressionLength(const std::string & separator = LINE_END);
+
+	bool GetResultOfTableCalculation(const InputSequence & seq, TableType type, bool exceptions = true);
 
 	LL1Walker m_LL1Walker;
 	CTableStorage m_tableStorage;

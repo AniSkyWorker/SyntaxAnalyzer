@@ -7,37 +7,17 @@
 namespace
 {
 
-const std::string START_BLOCK = "{";
-const std::string END_BLOCK = "}";
-const std::string OPEN_BRACKET = "(";
-const std::string CLOSE_BRACKET = ")";
-const std::string INDEX_OPEN = "[";
-const std::string INDEX_CLOSE = "]";
-const std::string IF_STATEMENT = "if";
-const std::string WHILE_STATEMENT = "while";
-const std::string ELIF_STATEMENT = "elif";
-const std::string ELSE_STATMENT = "else";
-const std::string LINE_END = ";";
-const std::string PRINT = "print";
-const std::string READ = "read";
-const std::string ID = "id";
-const std::string ASSIGMENT = "=";
-const std::string CONST = "const";
-
-namespace tokens
-{
-
-const std::string INT = "int";
-const std::string FLOAT = "float";
-const std::string CHAR = "char";
-const std::string STRING = "string";
-const std::string BOOL = "bool";
-
-}
-
 InputSequence GetSequenceFromSequence(size_t currentPos, size_t length, const InputSequence & inputSeq)
 {
-	return InputSequence(inputSeq.begin() + currentPos, inputSeq.begin() + currentPos + length);
+	size_t newLenght = currentPos + length;
+	if (newLenght <= inputSeq.size())
+	{
+		return InputSequence(inputSeq.begin() + currentPos, inputSeq.begin() + newLenght);
+	}
+	else
+	{
+		return InputSequence();
+	}
 }
 
 bool CheckOneTokenExpr(const std::string & token, const InputSequence & seq, bool exceptions = false)
@@ -48,7 +28,6 @@ bool CheckOneTokenExpr(const std::string & token, const InputSequence & seq, boo
 		{
 			throw ExpectedSymbolError(seq, { token });
 		}
-
 		return false;
 	}
 	return true;
@@ -98,11 +77,11 @@ void CSyntaxAnalyzer::CheckMainStruct()
 	}
 	else if (GetNextExpressionLength() != 0)
 	{
-		size_t nextExprLen = GetNextExpressionLength();
-		InputSequence seq = GetSequenceFromSequence(m_currentPos, nextExprLen, m_inputSeq);
-		if (CheckArithmeticExpression(seq) /*BoolExpression(seq)*/) //todo when realized
+		InputSequence seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
+		if (GetResultOfTableCalculation(seq, TableType::arithmetic, false) || GetResultOfTableCalculation(seq, TableType::boolean, false))
 		{
 			m_currentPos += seq.size();
+			MakeShiftIfNeeded(LINE_END, true, true);
 			CheckMainStruct();
 		}
 	}
@@ -147,29 +126,30 @@ void CSyntaxAnalyzer::CheckElIfConstruction()
 
 bool CSyntaxAnalyzer::CheckAssignment()
 {
-	if (MakeShiftIfNeeded(ID))
+	auto leftSeq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(ASSIGMENT), m_inputSeq);
+	if (CheckTypeWithIndecies(ID, leftSeq))
 	{
+		m_currentPos += leftSeq.size();
 		MakeShiftIfNeeded(ASSIGMENT, true, true);
-		auto assigmentSeq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
-		if (CheckData(assigmentSeq))
+		auto rightSeq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
+		if (CheckData(rightSeq))
 		{
-			m_currentPos += assigmentSeq.size();
+			m_currentPos += rightSeq.size();
 			MakeShiftIfNeeded(LINE_END, true, true);
 			return true;
 		}
 	}
-
 	return false;
 }
 
-bool CSyntaxAnalyzer::CheckBoolExpression(const InputSequence & /*seq*/)
+bool CSyntaxAnalyzer::CheckBoolExpression(const InputSequence & seq)
 {
-	return true;//m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(TableType::boolean));
+	return GetResultOfTableCalculation(seq, TableType::boolean);
 }
 
 bool CSyntaxAnalyzer::CheckArithmeticExpression(const InputSequence & seq)
 {
-	return m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(TableType::arithmetic));
+	return GetResultOfTableCalculation(seq, TableType::arithmetic);
 }
 
 bool CSyntaxAnalyzer::CheckRead()
@@ -194,15 +174,13 @@ bool CSyntaxAnalyzer::CheckPrint()
 	return false;
 }
 
-//TODO выпилить бул и int они будут в таблице
 bool CSyntaxAnalyzer::CheckData(const InputSequence & seq)
 {
-	if (CheckTypeWithIndecies(ID, seq)
+	if (GetResultOfTableCalculation(seq, TableType::arithmetic, false)
+		|| GetResultOfTableCalculation(seq, TableType::boolean, false)
+		|| CheckTypeWithIndecies(ID, seq)
 		|| CheckOneTokenExpr(tokens::STRING, seq)
-		|| CheckOneTokenExpr(tokens::CHAR, seq)
-		|| CheckOneTokenExpr(tokens::FLOAT, seq)
-		|| CheckOneTokenExpr(tokens::INT, seq)
-		|| CheckArithmeticExpression(seq))
+		|| CheckOneTokenExpr(tokens::CHAR, seq))
 	{
 		return true;
 	}
@@ -225,40 +203,39 @@ void CSyntaxAnalyzer::CheckBracketsExpr(const CheckSequenceFunc & insideBrackets
 	}
 }
 
-//todo рефакторить
 bool CSyntaxAnalyzer::CheckDeclare()
 {
 	bool isConst = MakeShiftIfNeeded(CONST);
-
 	auto found = TYPES_MAP.end();
 
 	if (m_currentPos < m_inputSeq.size())
 	{
-		found = std::find_if(TYPES_MAP.begin(), TYPES_MAP.end(), [=](const auto &typePair) { return typePair.second == m_inputSeq[m_currentPos]; });
+		found = std::find_if(TYPES_MAP.begin(), TYPES_MAP.end()
+			, [=](const auto &typePair) {
+			return typePair.second == m_inputSeq[m_currentPos];
+		});
 	}
 
+	//проверка декларации id или присваивания в зависимости от типа
 	if (found != TYPES_MAP.end() && MakeShiftIfNeeded(found->second))
 	{
 		MakeShiftIfNeeded(ID, true, true);
 		auto seq = GetSequenceFromSequence(m_currentPos, GetNextExpressionLength(), m_inputSeq);
-		if (MakeShiftIfNeeded(ASSIGMENT))
+		if (!seq.empty())
 		{
-			if (!seq.empty())
+			if (MakeShiftIfNeeded(ASSIGMENT))
 			{
 				seq.erase(seq.begin());
+				if (!(CheckTypeWithIndecies(ID, seq) || (m_checkTypesMap.at(found->first))(seq)))
+				{
+					throw ExpectedSymbolError(seq, { ID });
+				}
+				m_currentPos += seq.size();
 			}
-			if (CheckTypeWithIndecies(ID, seq) || (m_checkTypesMap.at(found->first))(seq))
+			else if (ChecIndexStruct(seq))
 			{
 				m_currentPos += seq.size();
 			}
-			else
-			{
-				throw ExpectedSymbolError(seq, { ID });
-			}
-		}
-		else if(ChecIndexStruct(seq))
-		{
-			m_currentPos += seq.size();
 		}
 
 		MakeShiftIfNeeded(LINE_END, true, true);
@@ -267,7 +244,7 @@ bool CSyntaxAnalyzer::CheckDeclare()
 
 	if (isConst)
 	{
-		throw ExpectedSymbolError({ GetSequenceElement(m_inputSeq, m_currentPos) }, { "type name" });
+		throw ExpectedSymbolError({ GetSequenceElement(m_inputSeq, m_currentPos) }, { "type_name" });
 	}
 
 	return false;
@@ -297,7 +274,7 @@ bool CSyntaxAnalyzer::MakeShiftIfNeeded(const std::string & checkStr, bool shift
 
 bool CSyntaxAnalyzer::CheckTypeWithIndecies(const std::string & type, const InputSequence & seq)
 {
-	return CheckOneTokenExpr(type, seq) || (MakeShiftIfNeeded(type, false) && ChecIndexStruct(seq, 1));
+	return !seq.empty() && (CheckOneTokenExpr(type, seq) || (MakeShiftIfNeeded(type, false) && ChecIndexStruct(GetSequenceFromSequence(1, seq.size() - 1, seq))));
 }
 
 bool CSyntaxAnalyzer::CheckString(const InputSequence & seq)
@@ -314,11 +291,7 @@ bool CSyntaxAnalyzer::ChecIndexStruct(const InputSequence & seq, size_t start)
 {
 	if (CheckIndex(seq, start))
 	{
-		size_t currentPos = m_currentPos + start;
-		if (currentPos < m_inputSeq.size())
-		{
-			return m_inputSeq[currentPos] == LINE_END || ChecIndexStruct(seq, start);
-		}
+		return start == seq.size() || ChecIndexStruct(seq, start);
 	}
 	return  false;
 }
@@ -340,26 +313,26 @@ bool CSyntaxAnalyzer::CheckIndex(const InputSequence & sequence, size_t & start)
 					start += 2;
 					return true;
 				}
-
 				throw ExpectedSymbolError(sequence, { ID, tokens::INT });
 			}
-
 			throw ExpectedSymbolError(sequence, { INDEX_CLOSE });
 		}
-		//todo в функцию 
-		throw ExpectedSymbolError(start == 0 ? sequence : GetSequenceFromSequence(start, sequence.size() - start, sequence), { LINE_END });
 	}
-
 	return false;
 }
 
-size_t CSyntaxAnalyzer::GetNextExpressionLength()
+size_t CSyntaxAnalyzer::GetNextExpressionLength(const std::string & separator)
 {
-	auto foundEndLineItr = std::find(m_inputSeq.begin() + m_currentPos, m_inputSeq.end(), LINE_END);
+	auto foundEndLineItr = std::find(m_inputSeq.begin() + m_currentPos, m_inputSeq.end(), separator);
 	if (foundEndLineItr != m_inputSeq.end())
 	{
 		return foundEndLineItr - (m_inputSeq.begin() + m_currentPos);
 	}
 
 	return 0;
+}
+
+bool CSyntaxAnalyzer::GetResultOfTableCalculation(const InputSequence & seq, TableType type, bool exceptions)
+{
+	return m_LL1Walker.CheckInputSequence(seq, m_tableStorage.GetLL1Table(type), exceptions);
 }

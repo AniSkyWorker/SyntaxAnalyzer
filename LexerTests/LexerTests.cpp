@@ -11,6 +11,10 @@ void CheckAnalyzerTokens(const std::string & name, const std::vector<std::string
 {
 	std::filebuf file;
 	file.open(name, std::ios_base::in);
+	if (!file.is_open())
+	{
+		throw std::runtime_error("Cannot open  file" + name);
+	}
 	std::istream stream(&file);
 
 	yyFlexLexer analyz(&stream, &std::cout);
@@ -32,7 +36,7 @@ BOOST_AUTO_TEST_CASE(one_line_sequence)
 
 BOOST_AUTO_TEST_CASE(multiline_sequence)
 {
-	std::vector<std::string> result = { "while", "(", "id", "<", "int", ")", "{", "id", "=", "id", "-", "int", ";", "}" };
+	std::vector<std::string> result = { "while", "(", "id", "less", "int", ")", "{", "id", "=", "id", "-", "int", ";", "}" };
 	CheckAnalyzerTokens("test2.txt", result);
 }
 
