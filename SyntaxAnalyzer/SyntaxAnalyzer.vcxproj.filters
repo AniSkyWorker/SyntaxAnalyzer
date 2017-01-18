@@ -10,16 +10,16 @@
     <Filter Include="SyntaxAnalyzer\Types">
       <UniqueIdentifier>{2e1d37fd-3ec1-4ef0-b3ca-cca3c44adebd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SyntaxAnalyzer\Analyzer">
+      <UniqueIdentifier>{5a587954-0526-4807-82fe-093867036908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SyntaxAnalyzer\Exceptions">
+      <UniqueIdentifier>{3a529abe-dff9-4566-a5d8-82139de83337}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SyntaxAnalyzer.h">
-      <Filter>SyntaxAnalyzer</Filter>
-    </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>SyntaxAnalyzer\Types</Filter>
-    </ClInclude>
-    <ClInclude Include="SyntaxExceptions.h">
-      <Filter>SyntaxAnalyzer</Filter>
     </ClInclude>
     <ClInclude Include="TableStorage.h">
       <Filter>Storage</Filter>
@@ -29,18 +29,24 @@
     </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="SyntaxAnalyzer.h">
+      <Filter>SyntaxAnalyzer\Analyzer</Filter>
+    </ClInclude>
+    <ClInclude Include="SyntaxExceptions.h">
+      <Filter>SyntaxAnalyzer\Exceptions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SyntaxAnalyzer.cpp">
-      <Filter>SyntaxAnalyzer</Filter>
-    </ClCompile>
-    <ClCompile Include="SyntaxExceptions.cpp">
-      <Filter>SyntaxAnalyzer</Filter>
-    </ClCompile>
     <ClCompile Include="TableStorage.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="SyntaxAnalyzer.cpp">
+      <Filter>SyntaxAnalyzer\Analyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="SyntaxExceptions.cpp">
+      <Filter>SyntaxAnalyzer\Exceptions</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

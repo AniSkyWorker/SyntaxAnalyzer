@@ -4,33 +4,22 @@
     <Filter Include="Analyzer">
       <UniqueIdentifier>{90f16d7a-8c43-4444-a9e2-11429e54129e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{e018d0f9-0be2-431d-88e1-b2bae27989c9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tests">
       <UniqueIdentifier>{faa165d1-bbb8-4cc4-b21e-8a553dc95263}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\SyntaxAnalyzer\SyntaxAnalyzer.h">
       <Filter>Analyzer</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="..\SyntaxAnalyzer\TableStorage.h">
       <Filter>Analyzer</Filter>
     </ClInclude>
     <ClInclude Include="..\SyntaxAnalyzer\SyntaxExceptions.h">
       <Filter>Analyzer</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SyntaxAnalyzer\SyntaxAnalyzer.cpp">
@@ -39,14 +28,12 @@
     <ClCompile Include="AnalyzerTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\SyntaxAnalyzer\TableStorage.cpp">
       <Filter>Analyzer</Filter>
     </ClCompile>
     <ClCompile Include="..\SyntaxAnalyzer\SyntaxExceptions.cpp">
       <Filter>Analyzer</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
 </Project>
